@@ -5,7 +5,7 @@ import { Box, Text } from "@chakra-ui/react";
 export default function Search(){
     return(
         <>
-        <Box bgColor="grey" height="100vh" display="flex" flexDirection="column"> 
+        <Box height="100vh" display="flex" flexDirection="column"> 
             <Box display="flex" justifyContent="start">
                 <CompSeacrh/>
             </Box>

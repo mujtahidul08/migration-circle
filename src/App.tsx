@@ -6,15 +6,20 @@ import Home from './pages/home'
 import Login from './pages/login'
 import Reset from './pages/reset'
 import Register from './pages/Register'
-import Navbar from './components/sideBar'
-import ProfileMini from './components/profileMini'
-import { Grid, GridItem, Stack } from "@chakra-ui/react"
-import Suggest from './components/suggest'
+// import Navbar from './components/sideBar'
+// import ProfileMini from './components/profileMini'
+// import { Grid, GridItem, Stack } from "@chakra-ui/react"
+// import Suggest from './components/suggest'
 import Forgot from './pages/forgot'
-import DescDev from './components/descDev'
-import Thread from './components/thread'
-import Post from './components/post'
+// import DescDev from './components/descDev'
+// import Thread from './components/thread'
+// import Post from './components/post'
 import PrivateRoute from './routes/privateRoute'
+import Follows from './pages/follows'
+import Profile from './pages/profile'
+import Search from './pages/search'
+import DetailPost from './pages/detailPost'
+import DetailImage from './pages/detailImage'
 
 
 
@@ -25,7 +30,6 @@ export default  function App() {
 
   return (
     <>
-    {/* <Navbar/> */}
 
     <Routes>
       <Route path='/login' element={<Login/>} />
@@ -34,16 +38,14 @@ export default  function App() {
       <Route path='/forgot' element={<Forgot/>} />
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated==="true"}/>} >
         <Route path='/' element={<Home/>} />
+        <Route path='/follows' element={<Follows/>} />
+        <Route path='/profile' element={<Profile/>} />
+        <Route path='/search' element={<Search/>} />
+        <Route path='/detailPost' element={<DetailPost/>} />
+        <Route path='/detailImage' element={<DetailImage/>} />
       </Route>
     </Routes>
     
-    {/* <ProfileMini/>
-    <Suggest/>
-    <DescDev/> */}
-
-    {/* <Thread/> */}\
-
-    {/* <Post/> */}
 
     </>
   )

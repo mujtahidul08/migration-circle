@@ -2,9 +2,8 @@ import { Box, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { BiCommentDetail } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
-import Thread from "./thread";
-import Post from "./post";
-import Replies from "./replies";
+import Thread from "@/components/thread";
+import Replies from "@/components/replies";
 
 const posts = [
     {

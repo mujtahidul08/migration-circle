@@ -1,5 +1,4 @@
-import { HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
-import { BiCommentDetail } from "react-icons/bi";
+import { HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { FaRegHeart } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
 

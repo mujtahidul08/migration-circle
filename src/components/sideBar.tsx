@@ -4,11 +4,18 @@ import { CgProfile } from "react-icons/cg";
 import { MdOutlinePersonSearch } from "react-icons/md";
 import { RiUserFollowLine } from "react-icons/ri";
 import { TbLogout2 } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 
 export default function SideBar() {
+  const navigate = useNavigate();
+
+  const onLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    navigate("/login");
+  };
   return (
     <Box>
-      <Stack p="3" height="100vh" className="flex">
+      <Stack p="3" height="full" className="flex">
         <Stack gap="3" className="flex justify-start">
           <h1 className="text-[#04A51E] font-bold text-3xl text-left">circle</h1>
           <h3 className="text-md text-white">
@@ -22,7 +29,7 @@ export default function SideBar() {
             </a>
           </h3>
           <h3 className="text-md text-white">
-            <a href="/follow" className="flex items-center gap-3">
+            <a href="/follows" className="flex items-center gap-3">
               <RiUserFollowLine style={{ color: "white", fontSize: "15px" }} /> Follow
             </a>
           </h3>
@@ -43,12 +50,14 @@ export default function SideBar() {
           </Button>
         </Stack>
 
-        <Stack display="flex" className="flex justify-end">
-          <h3 className="text-md text-white">
-            <a href="#" className="flex items-center gap-3">
-              <TbLogout2 style={{ color: "white", fontSize: "15px" }} /> Logout
-            </a>
-          </h3>
+        <Stack >
+          <Box
+            as="button"
+            className="flex items-center gap-3 text-md text-white"
+            onClick={onLogout}
+          >
+            <TbLogout2 style={{ color: "white", fontSize: "15px" }} /> Logout
+          </Box>
         </Stack>
       </Stack>
     </Box>

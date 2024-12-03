@@ -1,4 +1,4 @@
-import { HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Image, Link, Text, VStack } from "@chakra-ui/react";
 import { BiCommentDetail } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
@@ -87,10 +87,10 @@ const posts = [
 
 export default function Post() {  
     return (  
-        <>  
+        <Box w="full">  
             {posts.map((post, index) => ( 
-                <Link href="/status">
-                <HStack key={index} className="p-3" borderTopWidth="1px" borderColor="#3F3F3F" gap="4" display="flex" justifyContent="start">  
+                <Link href="/DetailPost">
+                <HStack key={index} className="p-3" borderBottomWidth="1px" borderColor="#3F3F3F" gap="4" display="flex" justifyContent="start" w="full">  
                     <Image className="flex justify-start align-top" src={post.avatar} boxSize="40px" borderRadius="full" fit="cover" />  
                     <VStack align="start" gap="1">  
                         <HStack>  
@@ -100,7 +100,9 @@ export default function Post() {
                         </HStack>  
                         <Text fontWeight="350" style={{fontSize:"13px", textAlign:"justify"}} color="white">{post.content}</Text>  
                         {post.image && (  
-                            <Image src={post.image} borderRadius="10px" w="full" />  
+                            <Link href="/DetailImage">
+                            <Image src={post.image} borderRadius="10px" w="full" />
+                            </Link>  
                         )}  
                         <HStack gap="7" display="flex" alignItems="center">  
                             <HStack display="flex" alignItems="center">  
@@ -120,6 +122,6 @@ export default function Post() {
                 </HStack>  
                 </Link>
             ))}  
-        </>  
+        </Box>  
     );  
 }  

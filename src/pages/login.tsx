@@ -3,10 +3,7 @@ import '../styles/login.css'
 import { PasswordInput } from "@/components/ui/password-input"
 import { useNavigate } from "react-router-dom"
 
-interface FormValues {
-  username: string
-  password: string
-}
+
 
 export default function Login(){
   const navigate = useNavigate()
