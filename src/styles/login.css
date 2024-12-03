@@ -1,0 +1,8 @@
+.descLogin{
+    width: 500px;
+}
+.forgot{
+    width: 500px;
+    display: flex;
+    justify-content: end;
+}
