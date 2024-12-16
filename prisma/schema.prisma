@@ -12,3 +12,68 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  username String   @unique
+  fullname String?
+  password String
+  threads  Thread[]
+  likes     Like[]
+  replies   Reply[]
+  following   Follow[]  @relation("Following")
+  follower   Follow[]   @relation("Follower")
+  isDeleted Int      @default(0)
+}
+
+model Thread {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  image     String? 
+  isDeleted Int      @default(0)
+  replies   Reply[]
+  likes     Like[]
+}
+
+model Reply {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  thread   Thread     @relation(fields: [threadId], references: [id])
+  threadId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  image     String? 
+  isDeleted Int      @default(0)
+  like      Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  isLike    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  thread    Thread  @relation(fields: [threadId], references: [id])
+  threadId  Int
+  reply     Reply?   @relation(fields: [replyId], references: [id])
+  replyId   Int?
+
+  @@unique([userId, threadId]) 
+  @@unique([userId, replyId])
+}
+
+model Follow {
+   id         Int    @id @default(autoincrement())
+  follower    User   @relation("Follower", fields: [followerId], references: [id])
+  followerId  Int
+  following   User   @relation("Following", fields: [followingId], references: [id])
+  followingId Int
+
+  @@unique([followerId, followingId]) 
+}
