@@ -37,7 +37,7 @@ model Thread {
   image     String? 
   isDeleted Int      @default(0)
   replies   Reply[]
-  likes     Like[]
+  like      Like[]
 }
 
 model Reply {
@@ -59,8 +59,8 @@ model Like {
   isLike    Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  thread    Thread  @relation(fields: [threadId], references: [id])
-  threadId  Int
+  thread    Thread?  @relation(fields: [threadId], references: [id])
+  threadId  Int?
   reply     Reply?   @relation(fields: [replyId], references: [id])
   replyId   Int?
 

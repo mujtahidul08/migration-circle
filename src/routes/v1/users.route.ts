@@ -11,6 +11,9 @@ userRoute.get("/", getAllUsers)
 userRoute.put("/:id", updateUser)
 userRoute.delete("/:id", deleteUser)
 userRoute.post("/follow/:id",authentication, FollowUser)
+// userRoute.post("/following",authentication, FollowingUser)
+// userRoute.post("/followers",authentication, FollowersUser)
+
 
 
 

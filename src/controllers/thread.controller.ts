@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 export async function createThread(req: Request, res: Response) {
-  req.headers;
   const { content, authorId } = req.body;
 
   if (!content || !authorId) {
@@ -53,7 +52,8 @@ export async function getAllThreads(req: Request, res: Response) {
         updatedAt: true,
         content: true,
         image: true,
-        likes:true
+        like:true,
+        replies:true
       },
     });
     res
