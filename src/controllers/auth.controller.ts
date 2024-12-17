@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken"
 
 const SECRET_KEY = process.env.SECRET_KEY ||"wakwakwakwak123"
 
-export async function register  (req: Request,res:Response){
+export async function register(req: Request,res:Response){
     const {username, email, password, fullname} = req.body
 
     if (!username||!password||!email){

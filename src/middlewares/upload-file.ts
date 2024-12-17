@@ -40,3 +40,17 @@ export function upload(req: Request, res: Response, next: NextFunction) {
     next();
   });
 }
+
+
+// import { CloudinaryStorage } from 'multer-storage-cloudinary';
+// import cloudinary from '../config/cloudinary';
+
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: 'myApp/uploads',
+//     allowed_formats: ['jpg', 'png', 'jpeg', 'gif'], 
+//   },
+// });
+
+// export const upload = multer({ storage });

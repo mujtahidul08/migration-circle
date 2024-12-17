@@ -1,5 +1,4 @@
 import express from 'express';
-
 import { upload } from '../../middlewares/upload-file';
 import { createThread, deleteThread, getAllThreads, likeThread, updateThread } from '../../controllers/thread.controller';
 import { authentication } from '../../middlewares/authentication';

@@ -6,8 +6,8 @@ const prisma = new PrismaClient();
 export async function searchUser(req: Request, res: Response) {
   const userId = (req as any).user?.id; 
   const query = req.query.q as string; 
-  const page = parseInt((req.query.page as string) || '1'); 
-  const pageSize = parseInt((req.query.pageSize as string) || '10');
+  // const page = parseInt((req.query.page as string) || '1'); 
+  // const pageSize = parseInt((req.query.pageSize as string) || '10');
 
   if (!query) {
     return res.status(400).json({ message: 'Query parameter "q" is required for search' });
@@ -33,15 +33,15 @@ export async function searchUser(req: Request, res: Response) {
         email: true,
         fullname: true,
       },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
+      // skip: (page - 1) * pageSize,
+      // take: pageSize,
     });
 
     res.status(200).json({
       message: 'Search results fetched successfully',
       query,
-      page,
-      pageSize,
+      // page,
+      // pageSize,
       results: users,
     });
   } catch (error) {

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 export async function createThread(req: Request, res: Response) {
-  const { content, authorId } = req.body;
+  const { content } = req.body;
+  const userId = (req as any).user?.id; 
 
-  if (!content || !authorId) {
+  if (!content || !userId) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -20,7 +20,7 @@ export async function createThread(req: Request, res: Response) {
 
   let data = {
     content,
-    authorId: parseInt(authorId),
+    authorId: parseInt(userId),
     image: imagePath,
   };
 
@@ -67,13 +67,20 @@ export async function getAllThreads(req: Request, res: Response) {
 export async function updateThread(req: Request, res: Response) {
   const { content,image} = req.body;
   const threadId = parseInt(req.params.id)
+  const userId = (req as any).user?.id; 
 
   try {
     const thread = await prisma.thread.findUnique({ where: { id: threadId } });
 
-    if (!thread) {
+    if (!thread ) {
       return res.status(404).json({ message: 'user not found' });
     }
+
+    // if ( thread.authorId !== userId) {
+    //   return res
+    //     .status(401)
+    //     .json({ message: 'User not granted to update this thread'});
+    // }
 
     const updatedData: any = {};
     if (content) updatedData.content = content;
