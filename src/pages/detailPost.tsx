@@ -24,7 +24,7 @@ export default function DetailPost (){
         <>
         {posts.map((post, index) => (
         <Box key={index} className="p-3" borderBottomWidth="1px" borderColor="#3F3F3F" gap="4">
-            <VStack className="p-3" gap="4">
+            <VStack className="p-3" gap="4" align="start">
                 <HStack >
                     <Image
                         src={post.avatar}

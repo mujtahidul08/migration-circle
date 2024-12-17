@@ -1,4 +1,4 @@
-import { HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import { FaRegHeart } from "react-icons/fa";
 import { FcLike } from "react-icons/fc";
 
@@ -51,10 +51,10 @@ const replies = [
 
 export default function Replies() {  
     return (  
-        <>  
+        <Box w="full">  
             {replies.map((reply, index) => ( 
-                <HStack key={index} className="p-3" borderTopWidth="1px" borderColor="#3F3F3F" gap="4" display="flex" justifyContent="start">  
-                    <Image className="flex justify-start align-top" src={reply.avatar} boxSize="40px" borderRadius="full" fit="cover" />  
+                <HStack key={index} className="p-3" borderTopWidth="1px" borderColor="#3F3F3F" gap="4" display="flex" justifyContent="start" alignItems="flex-start" >  
+                    <Image src={reply.avatar} boxSize="40px" borderRadius="full" fit="cover" align="start"  alignSelf="flex-start" />  
                     <VStack align="start" gap="1">  
                         <HStack>  
                             <Text fontWeight="medium" textStyle="sm" color="white">{reply.name}</Text>  
@@ -78,6 +78,6 @@ export default function Replies() {
                     </VStack>  
                 </HStack>  
             ))}  
-        </>  
+        </Box>  
     );  
 }  

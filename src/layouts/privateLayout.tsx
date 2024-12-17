@@ -29,7 +29,7 @@ export default function PrivateLayout(){
                 <VStack  align="stretch">
                 <ProfileMini />
                 <Suggest />
-                <DescDev />
+                {/* <DescDev /> */}
                 </VStack>
                 </Box>
             </HStack>

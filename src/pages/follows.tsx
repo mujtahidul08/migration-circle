@@ -36,54 +36,54 @@ export default function Follows() {
           Follows
         </Text>
         {/* Tabs */}
-        <Tabs.Root >
-            <Tabs.List display="flex" borderBottom="1px solid #3F3F3F">
-            <Tabs.Trigger
-                value="followers"
-                _selected={{
-                borderBottom: "3px solid #04A51E",
-                color: "white",
-                }}
-                _hover={{ borderBottom: "3px solid #3F3F3F" }}
-                flex="1"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                textAlign="center"
-                p="2"
-                color="whiteAlpha.800"
-            >
-                Followers
-            </Tabs.Trigger>
-            <Tabs.Trigger
-                value="following"
-                _selected={{
-                marginX:"3",
-                borderBottom: "3px solid #04A51E",
-                color: "white",
-                }}
-                _hover={{ borderBottom: "3px solid #3F3F3F" }}
-                flex="1"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                textAlign="center"
-                p="2"
-                color="whiteAlpha.800"
-                
-            >
-                Following
-            </Tabs.Trigger>
-            </Tabs.List>
+          <Tabs.Root >
+              <Tabs.List display="flex" borderBottom="1px solid #3F3F3F">
+              <Tabs.Trigger
+                  value="followers"
+                  _selected={{
+                  borderBottom: "3px solid #04A51E",
+                  color: "white",
+                  }}
+                  _hover={{ borderBottom: "3px solid #3F3F3F" }}
+                  flex="1"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  textAlign="center"
+                  p="2"
+                  color="whiteAlpha.800"
+              >
+                  Followers
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                  value="following"
+                  _selected={{
+                  marginX:"3",
+                  borderBottom: "3px solid #04A51E",
+                  color: "white",
+                  }}
+                  _hover={{ borderBottom: "3px solid #3F3F3F" }}
+                  flex="1"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  textAlign="center"
+                  p="2"
+                  color="whiteAlpha.800"
+                  
+              >
+                  Following
+              </Tabs.Trigger>
+              </Tabs.List>
 
-            {/* Tabs Content */}
-            <Tabs.Content value="followers" mt="4">
-            <SuggestAccount />
-            </Tabs.Content>
-            <Tabs.Content value="following" mt="4">
-            <SuggestAccount />
-            </Tabs.Content>
-        </Tabs.Root>
+              {/* Tabs Content */}
+              <Tabs.Content value="followers" mt="4">
+              <SuggestAccount />
+              </Tabs.Content>
+              <Tabs.Content value="following" mt="4">
+              <SuggestAccount />
+              </Tabs.Content>
+          </Tabs.Root>
       </Box>
     );
   }
