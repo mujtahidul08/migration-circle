@@ -65,3 +65,137 @@ export async function getAllImagesByUser(req: Request, res: Response) {
     res.status(500).json({ message: 'Error fetching all images', error });
   }
 }
+
+export async function getFollowing(req: Request, res: Response) {
+  const userId = (req as any).user?.id; 
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized access' });
+  }
+
+  try {
+    const following = await prisma.follow.findMany({
+      where: {
+        followerId: userId, 
+      },
+      include: {
+        following: { 
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            fullname: true,
+          },
+        },
+      },
+    });
+
+    const result = following.map((f) => f.following); 
+
+    res.status(200).json({ message: 'Following list fetched successfully', following: result });
+  } catch (error) {
+    console.error('Error fetching following:', error);
+    res.status(500).json({ message: 'Error fetching following', error });
+  }
+}
+
+export async function getFollowers(req: Request, res: Response) {
+  const userId = (req as any).user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized access' });
+  }
+
+  try {
+    const followers = await prisma.follow.findMany({
+      where: {
+        followingId: userId, 
+      },
+      include: {
+        follower: { 
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            fullname: true,
+          },
+        },
+      },
+    });
+
+    const result = followers.map((f) => f.follower); 
+
+    res.status(200).json({ message: 'Followers list fetched successfully', followers: result });
+  } catch (error) {
+    console.error('Error fetching followers:', error);
+    res.status(500).json({ message: 'Error fetching followers', error });
+  }
+}
+
+export async function suggestAccount(req: Request, res: Response) {
+  const userId = (req as any).user?.id; 
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized access' });
+  }
+
+  try {
+    const notFollowBack = await prisma.user.findMany({
+      where: {
+        AND: [
+          { id: { not: userId } }, 
+          {
+            follower: {
+              some: {
+                followerId: userId, 
+              },
+            },
+          },
+          {
+            following: {
+              none: {
+                followingId: userId,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        fullname: true,
+      },
+    });
+    
+    const usersNotFollowed = await prisma.user.findMany({
+      where: {
+        AND: [
+          { id: { not: userId } },
+          {
+            follower: {
+              none: {
+                followerId: userId,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        fullname: true,
+      },
+    });
+
+    res.status(200).json({
+      message: 'Suggested accounts fetched successfully',
+      notFollowed: usersNotFollowed,
+      notFollowBack: notFollowBack,
+    });
+  } catch (error) {
+    console.error('Error fetching suggested accounts:', error);
+    res.status(500).json({ message: 'Error fetching suggested accounts', error });
+  }
+}

@@ -1,20 +1,11 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
 const userRoute = express.Router()
 import { PrismaClient } from '@prisma/client'
-import bcrypt from "bcrypt"
-import { deleteUser, FollowUser, getAllUsers, updateUser } from '../../controllers/user.controller'
-import { authentication } from '../../middlewares/authentication'
+import { deleteUser,getAllUsers, updateUser } from '../../controllers/user.controller'
 const prisma = new PrismaClient()
-
 
 userRoute.get("/", getAllUsers)
 userRoute.put("/:id", updateUser)
 userRoute.delete("/:id", deleteUser)
-userRoute.post("/follow/:id",authentication, FollowUser)
-// userRoute.post("/following",authentication, FollowingUser)
-// userRoute.post("/followers",authentication, FollowersUser)
-
-
-
 
 export default userRoute
