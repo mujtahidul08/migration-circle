@@ -34,7 +34,7 @@ export default function App() {
           <Route path="/forgot" element={<Forgot />} />
           <Route
             element={
-              <PrivateRoute isAuthenticated={isAuthenticated === 'true'} />
+              <PrivateRoute username='muja' email='muja@mail.com' />
             }
           >
             <Route path="/" element={<Home />} />

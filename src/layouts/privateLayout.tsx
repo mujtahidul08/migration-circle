@@ -3,9 +3,10 @@ import { Box, HStack, VStack } from "@chakra-ui/react";
 import SideBar from "@/components/sideBar";
 import ProfileMini from "@/components/profileMini";
 import Suggest from "@/components/suggest";
-import DescDev from "@/components/descDev";
 
 export default function PrivateLayout(){
+
+    
     return(
         <div>
             <HStack gap="0" m="0" p="0" w="full" h="full">
