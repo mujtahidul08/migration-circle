@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { fetchLogin } from '@/features/auth/services/auth-service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import useUserStore from '@/hooks/userStore';
+import { apiURL } from '@/utils/baseurl';
 
 const loginSchema = z.object({    
   username: z.string().min(1,'Invalid username'),  
@@ -22,12 +24,15 @@ export default function Login() {
       resolver: zodResolver(loginSchema),
     });
   
+    const {setUser} = useUserStore()
+    console.log(`${apiURL}auth/login`);
     const onSubmit = (data: LoginFormInputs) => {  
       console.log(data);
       fetchLogin(data)  
         .then((res)=>{
           console.log(res)
           if(res.token){
+            setUser(res.user)
             localStorage.setItem('user',JSON.stringify(res.user))
             localStorage.setItem('token',res.token)
           }

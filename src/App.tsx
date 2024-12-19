@@ -20,10 +20,11 @@ import Search from './pages/search';
 import DetailPost from './pages/detailPost';
 import DetailImage from './pages/detailImage';
 import UserProvider from './hooks/contexts/userContexts';
+import useUserStore from './hooks/userStore';
 
 export default function App() {
-  const isAuthenticated = localStorage.getItem('isAuthenticated');
-  console.log('isAuthenticated:', isAuthenticated);
+
+ const {user} = useUserStore()
   return (
     <>
       <UserProvider>
@@ -34,7 +35,7 @@ export default function App() {
           <Route path="/forgot" element={<Forgot />} />
           <Route
             element={
-              <PrivateRoute username='muja' email='muja@mail.com' />
+              <PrivateRoute user = {user} />
             }
           >
             <Route path="/" element={<Home />} />
