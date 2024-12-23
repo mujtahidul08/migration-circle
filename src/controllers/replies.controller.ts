@@ -37,24 +37,6 @@ export async function createReply(req: Request, res: Response) {
   }
 }
 
-export async function getAllReply(req: Request, res: Response) {
-    const threadId = parseInt(req.params.id)
-  try {
-    const allReply = await prisma.reply.findMany({
-        where: {
-          threadId: threadId,
-        },
-        include: {
-          like: true, 
-        },
-      });
-    res
-      .status(200)
-      .json({ message: 'get all Reply successful', threads: allReply });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching all replies', error });
-  }
-}
 
 export async function deleteReply(req: Request, res: Response) {
     const replyId = parseInt(req.params.id);
@@ -128,3 +110,25 @@ export async function likeReply(req: Request, res: Response) {
     }
   }
     
+  export async function getAllReply(req: Request, res: Response) {
+    const threadId = parseInt(req.params.id);
+  
+    if (isNaN(threadId)) {
+      return res.status(400).json({ message: "Invalid Thread ID" });
+    }
+  
+    try {
+      const replies = await prisma.reply.findMany({
+        where: { threadId },
+        include: {
+          author: { select: { username: true, profile: { select: { avatarImage: true } } } },
+        },
+        orderBy: { createdAt: "desc" }, 
+      });
+  
+      res.status(200).json(replies);
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+      res.status(500).json({ message: "Error fetching replies", error });
+    }
+  }

@@ -1,6 +1,6 @@
 import express from 'express';
 import { upload } from '../../middlewares/upload-file';
-import { createThread, deleteThread, getAllThreads, likeThread, updateThread } from '../../controllers/thread.controller';
+import { createThread, deleteThread, getAllThreads, getThreadById, likeThread, updateThread } from '../../controllers/thread.controller';
 import { authentication } from '../../middlewares/authentication';
 import { createReply, deleteReply, getAllReply, likeReply } from '../../controllers/replies.controller';
 
@@ -10,6 +10,7 @@ threadRoute.post('/', authentication, upload, createThread);
 threadRoute.get('/', authentication, getAllThreads);
 threadRoute.delete('/:id', authentication, deleteThread);
 threadRoute.put('/:id', authentication, updateThread);
+threadRoute.get("/thread/:id", getThreadById);
 threadRoute.post("/replies/:id", authentication, upload, createReply)
 threadRoute.get('/replies/:id', authentication, getAllReply);
 threadRoute.delete('/replies/:id', authentication, deleteReply);

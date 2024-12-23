@@ -40,7 +40,7 @@ export async function createThread(req: Request, res: Response) {
 }
 
 export async function getAllThreads(req: Request, res: Response) {
-  try {
+  try {    
     const allThreads = await prisma.thread.findMany({
       where: {
         isDeleted: 0,
@@ -52,15 +52,48 @@ export async function getAllThreads(req: Request, res: Response) {
         updatedAt: true,
         content: true,
         image: true,
-        like:true,
-        replies:true
+        like: true,
+        replies: true,
+        author: {
+          select: {
+            username: true,
+            email: true,
+            profile: true
+          },
+        },
       },
     });
+
     res
       .status(200)
-      .json({ message: 'get all threads successful', threads: allThreads });
+      .json({ message: 'Get all threads successful', threads: allThreads });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching all threads', error });
+  }
+}
+
+export async function getThreadById(req: Request, res: Response) {
+  const threadId = parseInt(req.params.id);
+  try {
+    const thread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      include: {
+        author: true,
+        replies: {
+          include: {
+            like: true,
+          },
+        },
+      },
+    });
+
+    if (!thread) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+
+    res.status(200).json(thread);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching thread detail", error });
   }
 }
 

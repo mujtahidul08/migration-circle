@@ -11,7 +11,7 @@ export async function register(req: Request,res:Response){
     const {username, email, password, fullname} = req.body
 
     if (!username||!password||!email){
-        res.status(400).json({message:"all fields are required"})
+        return res.status(400).json({message:"all fields are required"})
     }
 
     try{
@@ -32,11 +32,11 @@ export async function register(req: Request,res:Response){
                 password : hashedPassword
             }
         })
-        res.status(201).json({message:"user registered", user:newUser})
+        return res.status(201).json({message:"user registered", user:newUser})
     }
 
     catch(error){
-        res.status(400).json({message:"all fields are required"})
+        return res.status(400).json({message:"all fields are required"})
     }
 
 }
@@ -65,7 +65,7 @@ export async function login (req: Request,res:Response) {
                 SECRET_KEY,
                 {expiresIn:"10h"}
             )
-            res.status(400).json({message:"login succesfull", user:{
+            res.status(200).json({message:"login succesfull", user:{
                 username:user.username,
                 email: user.email
             },
