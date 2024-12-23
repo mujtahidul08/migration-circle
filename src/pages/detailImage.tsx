@@ -1,5 +1,5 @@
 import { Box, HStack, Image, VStack } from "@chakra-ui/react";
-import DetailPost from "./detailPost";
+import DetailPost from "./detailThread";
 
 export default function DetailImage(){
     return(

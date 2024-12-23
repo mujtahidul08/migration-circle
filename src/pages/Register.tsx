@@ -1,30 +1,34 @@
-import { Button, Input, Stack,Text } from "@chakra-ui/react"
-import '../styles/login.css'
-import { zodResolver } from '@hookform/resolvers/zod';  
-import { useForm } from 'react-hook-form';  
-import { z } from 'zod';  
+import { Button, Input, Stack, Text } from "@chakra-ui/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const registerSchema = z.object({  
-  fullName: z.string().min(1, 'Full name is required'),  
-  email: z.string().email('Invalid email address'),  
-  password: z.string().min(63, 'Password must be at least 3 characters long'),  
-}); 
+const registerSchema = z.object({
+  email: z.string().email("ivalid email"),
+  username: z.string().min(1, "Invalid username"),
+  password: z.string().min(6, "Password must be at least 6 characters long"), // password validation
+});
 
-type RegisterFormInputs = z.infer<typeof registerSchema>;  
+type RegisterFormInputs = z.infer<typeof registerSchema>;
 
-
-export default function Register(){
-  const {
-    register,
-    handleSubmit,
-    formState: {errors}, 
-  } = useForm<RegisterFormInputs>({
+export default function Register() {
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema),
   });
+  const navigate = useNavigate();
 
-  const onSubmit = (data: RegisterFormInputs) => {  
-    console.log(data);  
-  };  
+  const onSubmit = async (data: RegisterFormInputs) => {
+    console.log(data);
+    try {
+      const response = await axios.post("http://localhost:3000/api/auth/register", data);
+      console.log(response.data);
+      navigate("/login");  
+    } catch (error) {
+      console.error("Registration failed", error);
+    }
+  };
 
   return (
     <div className="card flex flex-col justify-center items-center h-screen">
@@ -33,62 +37,75 @@ export default function Register(){
         <h3 className="text-xl text-white mb-2">Create Account Circle</h3>
       </div>
       <div className="formLogin">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap="4" align="flex-center" width="500px">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack gap="4" align="flex-center" width="500px">
             <Input
-            {...register('fullName')}
-            width="100%"
-            padding="4"
-            rounded="md"
-            borderWidth="1px"
-            borderColor="whiteAlpha.950"
-            placeholder="Full Name*"
-            color="white"
+              {...register("email")}
+              width="100%"
+              padding="4"
+              rounded="md"
+              borderWidth="1px"
+              borderColor="whiteAlpha.950"
+              placeholder="Email*"
+              color="white"
             />
-            {
-              errors.fullName && (<Text color="red" fontSize="xs">{errors.fullName.message}</Text>)
-            }
-          <Input
-          {...register('email')}
-            width="100%"
-            padding="4"
-            rounded="md"
-            borderWidth="1px"
-            borderColor="whiteAlpha.950"
-            placeholder="Email*"
-            color="white"
-          />
-          {
-              errors.email && (<Text color="red" fontSize="xs">{errors.email.message}</Text>)
-            }
-          <Input
-            {...register('password')}
-            width="100%"
-            padding="4"
-            rounded="md"
-            borderWidth="1px"
-            borderColor="whiteAlpha.950"
-            placeholder="Password*"
-            color="white"
-          />
-          {
-              errors.password && (<Text color="red" fontSize="xs">{errors.password.message}</Text>)
-            }
-          <Button
-            type="submit"
-            width="100%"
-            rounded="50px"
-            bgColor="#04A51E"
-            color="white"
-          >
-            Create
-          </Button>
-        </Stack>
-        <p className="text-white">Already have account?<a href="/login" className="text-[#04A51E]"> Login</a> </p>
+            {errors.email && (
+              <Text color="red" fontSize="xs">
+                {errors.email.message}
+              </Text>
+            )}
 
-      </form>
-    </div>
-    </div>
+            <Input
+              {...register("username")}
+              width="100%"
+              padding="4"
+              rounded="md"
+              borderWidth="1px"
+              borderColor="whiteAlpha.950"
+              placeholder="Username*"
+              color="white"
+            />
+            {errors.username && (
+              <Text color="red" fontSize="xs">
+                {errors.username.message}
+              </Text>
+            )}
 
-  )
+            <Input
+              {...register("password")}
+              type="password"
+              width="100%"
+              padding="4"
+              rounded="md"
+              borderWidth="1px"
+              borderColor="whiteAlpha.950"
+              placeholder="Password*"
+              color="white"
+            />
+            {errors.password && (
+              <Text color="red" fontSize="xs">
+                {errors.password.message}
+              </Text>
+            )}
+
+            <Button
+              type="submit"
+              width="100%"
+              rounded="50px"
+              bgColor="#04A51E"
+              color="white"
+            >
+              Create Account
+            </Button>
+          </Stack>
+          <p className="text-white">
+            Already have an account?{" "}
+            <a href="/login" className="text-[#04A51E]">
+              Login
+            </a>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
 }

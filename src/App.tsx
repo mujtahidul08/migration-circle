@@ -17,7 +17,7 @@ import PrivateRoute from './routes/privateRoute';
 import Follows from './pages/follows';
 import Profile from './pages/profile';
 import Search from './pages/search';
-import DetailPost from './pages/detailPost';
+import DetailPost from './pages/detailThread';
 import DetailImage from './pages/detailImage';
 import UserProvider from './hooks/contexts/userContexts';
 import useUserStore from './hooks/userStore';

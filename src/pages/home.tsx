@@ -1,15 +1,31 @@
 import DialogThread from '@/components/dialogThread';
-import Post from '@/components/post';
+import Post from '@/components/thread';
 import { Box } from '@chakra-ui/react';
-import { UserContext } from '@/hooks/contexts/userContexts';
-import { useContext} from 'react';
+import {  useEffect, useState} from 'react';
+import useUserStore from '@/hooks/userStore';
+import axios from 'axios';
 
-// import { ThreadsType } from '@/types/thread.types';
-// import { getAllThreads } from '@/features/dashboard/services/thread.services';
 
 export default function Home() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, token } = useUserStore(); // Ambil user dan token dari store
+  const [ data, setData] = useState(null);
 
+  useEffect(() => {
+    if (token) {
+      axios
+        .get("http://localhost:3000/api/thread", {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        })
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching data:", err);
+        });
+    }
+  }, [token]);
 
   return (
     <Box>
@@ -23,7 +39,7 @@ export default function Home() {
         scrollBehavior="smooth"
       >
         <h3 className="text-3xl text-white p-3 font-medium">
-          Home, {user.name}
+          Home, {user?.username}
         </h3>
         <DialogThread />
         <Post />

@@ -1,13 +1,12 @@
 import { Button, Input, Stack, Text } from '@chakra-ui/react';
 import '../styles/login.css';
 import { PasswordInput } from '@/components/ui/password-input';
-
 import { z } from 'zod';
 import { fetchLogin } from '@/features/auth/services/auth-service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useUserStore from '@/hooks/userStore';
-import { apiURL } from '@/utils/baseurl';
+import { useNavigate } from 'react-router-dom';
 
 const loginSchema = z.object({    
   username: z.string().min(1,'Invalid username'),  
@@ -23,23 +22,25 @@ export default function Login() {
     } = useForm<LoginFormInputs>({
       resolver: zodResolver(loginSchema),
     });
-  
+    const navigate = useNavigate();
     const {setUser} = useUserStore()
-    console.log(`${apiURL}auth/login`);
-    const onSubmit = (data: LoginFormInputs) => {  
-      console.log(data);
-      fetchLogin(data)  
-        .then((res)=>{
-          console.log(res)
-          if(res.token){
-            setUser(res.user)
-            localStorage.setItem('user',JSON.stringify(res.user))
-            localStorage.setItem('token',res.token)
+    const {setToken} = useUserStore()
+    const onSubmit = (data: LoginFormInputs) => {
+      fetchLogin(data)
+        .then((res) => {
+          console.log(res);
+          if (res.token) {
+            setUser(res.user); // Set user ke store
+            setToken(res.token); // Set token ke store
+            localStorage.setItem('user', JSON.stringify(res.user));
+            localStorage.setItem('token', res.token);
+            navigate('/'); // Arahkan ke Home
           }
         })
-        .catch((err)=>console.error(err))
-    };  
-  
+        .catch((err) => {
+          console.error("Login failed:", err.message);
+        });
+    };
   return (
     <div className="card flex flex-col justify-center items-center h-screen">
       <div className="descLogin flex flex-col justify-start">
@@ -103,6 +104,7 @@ export default function Login() {
     </div>
   );
 }
+
 
 
 // import { Button, Input, Stack, Text } from '@chakra-ui/react';

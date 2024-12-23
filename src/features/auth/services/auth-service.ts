@@ -4,7 +4,7 @@ import { LoginFromProps } from "../types/authTypes"
 
 export const fetchLogin = async (data:LoginFromProps) => {
   try{
-    const res:AxiosResponse = await axios.post(apiURL + 'auth/login',data, {
+    const res:AxiosResponse = await axios.post(apiURL + 'api/auth/login',data, {
       headers:{
         'Content-Type' : "application/json"
       }

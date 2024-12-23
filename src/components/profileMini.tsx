@@ -1,10 +1,10 @@
 import { Box, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import DialogEditProfile from './dialogEditProfile';
-import { UserContext } from '@/hooks/contexts/userContexts';
-import { useContext } from 'react';
+import useUserStore from '@/hooks/userStore';
 
 export default function ProfileMini() {
-  const { user } = useContext(UserContext);
+  const {user} = useUserStore()
+
   return (
     <>
       <Box padding="10px" bgColor="#262626" borderRadius="10px" mb="5px">
@@ -18,7 +18,7 @@ export default function ProfileMini() {
             style={{ position: 'relative', zIndex: 1 }}
           />
           <Image
-            src="https://bit.ly/naruto-sage"
+            src={user?.profile?.avatarImage || "https://bit.ly/naruto-sage"} 
             boxSize="48px"
             borderRadius="full"
             fit="cover"
@@ -34,21 +34,21 @@ export default function ProfileMini() {
 
         <Stack gap="0">
           <Text fontWeight="medium" textStyle="sm" color="white">
-            {user.name}
+            {user?.username}
           </Text>
           <Text color="#909090" textStyle="xs">
-            {user.email}
+            {user?.email}
           </Text>
         </Stack>
 
         <Text textStyle="sm" color="white" truncate>
-          Lorem ipsum dolor sit amet, consectetur adipisicing
+          {user?.profile?.bio || "bio is null or undetected"}
         </Text>
 
         <HStack>
           <HStack>
             <Text fontWeight="medium" textStyle="xs" color="white">
-              270
+            {user?.following || 0}
             </Text>
             <Text color="#909090" textStyle="xs">
               Following
@@ -57,7 +57,7 @@ export default function ProfileMini() {
 
           <HStack>
             <Text fontWeight="medium" textStyle="xs" color="white">
-              56
+            {user?.followers || 0}
             </Text>
             <Text color="#909090" textStyle="xs">
               Followers

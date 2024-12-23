@@ -1,4 +1,4 @@
-import Post from "@/components/post";
+import Post from "@/components/thread";
 import ProfileMini from "@/components/profileMini";
 import { UserContext } from '@/hooks/contexts/userContexts';
 import { useContext } from 'react';
