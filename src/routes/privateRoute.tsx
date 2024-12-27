@@ -3,15 +3,22 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 interface UserType {
-  username: string,
-  email: string
-}
-interface privateRouteProps {
-  user: UserType|null
+  username: string;
+  email: string;
 }
 
-const PrivateRoute: React.FC<privateRouteProps> = ({user}) => {
+interface PrivateRouteProps {
+  user: UserType | null;
+}
 
-  return user ? <PrivateLayout /> : <Navigate to="/login" />;
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ user }) => {
+  const token = localStorage.getItem("token");
+
+  return user && token ? (
+    <PrivateLayout />
+  ) : (
+    <Navigate to="/login" />
+  );
 };
+
 export default PrivateRoute;

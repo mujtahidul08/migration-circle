@@ -29,7 +29,7 @@ import { FcLike } from "react-icons/fc";
         useEffect(() => {
           const fetchReplies = async () => {
             try {
-              const response = await axios.get(apiURL + `/api/replies/${threadId}`);
+              const response = await axios.get(apiURL + `/api/thread/replies/${threadId}`);
               setReplies(response.data);
             } catch (error) {
               console.error("Failed to fetch replies:", error);

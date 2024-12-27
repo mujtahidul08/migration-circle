@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const registerSchema = z.object({
   email: z.string().email("ivalid email"),
   username: z.string().min(1, "Invalid username"),
-  password: z.string().min(6, "Password must be at least 6 characters long"), // password validation
+  password: z.string().min(6, "Password must be at least 6 characters long"), 
 });
 
 type RegisterFormInputs = z.infer<typeof registerSchema>;
@@ -24,9 +25,24 @@ export default function Register() {
     try {
       const response = await axios.post("http://localhost:3000/api/auth/register", data);
       console.log(response.data);
-      navigate("/login");  
-    } catch (error) {
+
+      Swal.fire({
+        title: "Registration Successful!",
+        text: "Your account has been created. You can now log in.",
+        icon: "success",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login"); 
+      });
+    } catch (error: any) {
       console.error("Registration failed", error);
+
+      Swal.fire({
+        title: "Registration Failed",
+        text: error.response?.data?.message || "An error occurred. Please try again.",
+        icon: "error",
+        confirmButtonText: "Retry",
+      });
     }
   };
 

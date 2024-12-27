@@ -11,10 +11,49 @@ import {
 } from '@/components/ui/dialog';
 import { UserContext } from '@/hooks/contexts/userContexts';
 import { useContext, useState } from 'react';
+import { updateProfile } from '@/features/dashboard/services/profile.services';
+import Swal from 'sweetalert2';
 
 export default function DialogEditProfile() {
   const { user, setUser } = useContext(UserContext);
-  const [name, setName] = useState<string>('');
+  const [username, setUsername] = useState<string>(user.username);
+  const [email, setEmail] = useState<string>(user.email);
+  const [bio, setBio] = useState<string>(user.profile?.bio || "");
+
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire({
+        icon: "warning",
+        title: "Unauthorized",
+        text: "User not authenticated",
+      });
+      return;
+    }
+
+    try {
+      const updatedUser = await updateProfile(token, { username, email, bio });
+      
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Profile updated successfully!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setUser(updatedUser); // Update state user di konteks
+    } catch (error: any) {
+      console.error("Error updating profile:", error.message);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Failed to update profile. Please try again.",
+      });
+    }
+  };
+
   return (
     <>
       <DialogRoot>
@@ -72,10 +111,11 @@ export default function DialogEditProfile() {
                 rounded="md"
                 borderWidth="1px"
                 borderColor="#545454"
-                placeholder="Name"
+                placeholder="Username"
                 color="white"
                 gap="4"
-                onChange={(e) => setName(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
               <Input
                 width="100%"
@@ -83,9 +123,11 @@ export default function DialogEditProfile() {
                 rounded="md"
                 borderWidth="1px"
                 borderColor="#545454"
-                placeholder="Username"
+                placeholder="Email"
                 color="white"
                 gap="4"
+                value={email}
+              onChange={(e) => setEmail(e.target.value)}
               />
               <Textarea
                 resize="none"
@@ -97,6 +139,8 @@ export default function DialogEditProfile() {
                 placeholder="Bio"
                 color="white"
                 gap="4"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
               />
             </VStack>
           </DialogBody>
@@ -108,13 +152,7 @@ export default function DialogEditProfile() {
               rounded="50px"
               bgColor="#04A51E"
               color="white"
-              onClick={() =>
-                setUser({
-                  name: name,
-                  email: user.email,
-                  password: user.password,
-                })
-              }
+              onClick={handleSave}
             >
               Save
             </Button>

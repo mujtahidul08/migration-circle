@@ -9,10 +9,54 @@ import {
   DialogRoot,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { createThread } from '@/features/dashboard/services/thread.services';
+import Swal from 'sweetalert2';
 
 export default function DialogThread() {
+  const [content, setContent] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!content) {
+      Swal.fire({
+        icon: "warning",
+        title: "Oops...",
+        text: "Content cannot be empty!",
+      });
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      await createThread(content, token || "");
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Thread created successfully!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setContent(""); 
+      navigate("/"); 
+    } catch (error: any) {
+      console.error("Error creating thread:", error.message);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Failed to create thread. Please try again.",
+      });
+    }
+  };
   return (
     <>
+    
       <DialogRoot>
         <DialogTrigger asChild>
           <HStack
@@ -33,6 +77,7 @@ export default function DialogThread() {
               padding="1"
               placeholder="What is happening?!"
               color="white"
+             
             />
 
             <BiImageAdd style={{ color: '#005E0E', fontSize: '35px' }} />
@@ -51,6 +96,7 @@ export default function DialogThread() {
           </HStack>
         </DialogTrigger>
         <DialogContent bgColor="#1D1D1D">
+        <form onSubmit={handleSubmit}>
           <DialogHeader color="white"></DialogHeader>
           <DialogBody>
             <HStack>
@@ -64,6 +110,8 @@ export default function DialogThread() {
                 padding="1"
                 placeholder="What is happening?!"
                 color="white"
+                value={content} 
+                onChange={(e) => setContent(e.target.value)}
               />
             </HStack>
           </DialogBody>
@@ -84,9 +132,11 @@ export default function DialogThread() {
               </Button>
             </HStack>
           </DialogFooter>
+          </form>
           <DialogCloseTrigger />
         </DialogContent>
       </DialogRoot>
+      
     </>
   );
 }

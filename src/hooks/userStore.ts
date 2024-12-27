@@ -14,8 +14,14 @@ interface userState {
 const useUserStore = create<userState>((set) => ({
   user: null,
   token: null,
-  setUser: (user) => set({ user }),
-  setToken: (token) => set({ token }),
+  setUser: (user) => {
+    localStorage.setItem("user", JSON.stringify(user)); 
+    set({ user });
+  },
+  setToken: (token) => {
+    localStorage.setItem("token", token); 
+    set({ token });
+  },
   clearUser: () => set({ user: null, token: null }),
   updateFollowers: (followers) =>
     set((state) => {

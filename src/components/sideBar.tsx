@@ -4,14 +4,16 @@ import { CgProfile } from "react-icons/cg";
 import { MdOutlinePersonSearch } from "react-icons/md";
 import { RiUserFollowLine } from "react-icons/ri";
 import { TbLogout2 } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DialogPost from "./dialogPost";
 
 export default function SideBar() {
   const navigate = useNavigate();
 
   const onLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("loglevel");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
   return (
@@ -20,24 +22,24 @@ export default function SideBar() {
         <Stack gap="3">
           <h1 className="text-[#04A51E] font-bold text-3xl text-left">circle</h1>
           <h3 className="text-md text-white">
-            <a href="/" className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
               <AiOutlineHome style={{ color: "white", fontSize: "15px" }} /> Home
-            </a>
+            </Link>
           </h3>
           <h3 className="text-md text-white">
-            <a href="/search" className="flex items-center gap-3">
+            <Link to="/search" className="flex items-center gap-3">
               <MdOutlinePersonSearch style={{ color: "white", fontSize: "15px" }} /> Search
-            </a>
+            </Link>
           </h3>
           <h3 className="text-md text-white">
-            <a href="/follows" className="flex items-center gap-3">
+            <Link to="/follows" className="flex items-center gap-3">
               <RiUserFollowLine style={{ color: "white", fontSize: "15px" }} /> Follow
-            </a>
+            </Link>
           </h3>
           <h3 className="text-md text-white">
-            <a href="/profile" className="flex items-center gap-3">
+            <Link to="/profile" className="flex items-center gap-3">
               <CgProfile style={{ color: "white", fontSize: "15px" }} /> Profile
-            </a>
+            </Link>
           </h3>
           <DialogPost/>
         </Stack>

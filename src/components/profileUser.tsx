@@ -2,7 +2,7 @@ import { Box, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import DialogEditProfile from './dialogEditProfile';
 import useUserStore from '@/hooks/userStore';
 
-export default function ProfileMini() {
+export default function ProfileUser() {
   const {user} = useUserStore()
 
   return (

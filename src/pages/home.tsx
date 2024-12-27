@@ -1,9 +1,9 @@
 import DialogThread from '@/components/dialogThread';
-import Post from '@/components/thread';
 import { Box } from '@chakra-ui/react';
 import {  useEffect, useState} from 'react';
 import useUserStore from '@/hooks/userStore';
 import axios from 'axios';
+import Thread from '@/components/thread';
 
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
           Home, {user?.username}
         </h3>
         <DialogThread />
-        <Post />
+        <Thread />
       </Box>
     </Box>
   );

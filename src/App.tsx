@@ -17,14 +17,31 @@ import PrivateRoute from './routes/privateRoute';
 import Follows from './pages/follows';
 import Profile from './pages/profile';
 import Search from './pages/search';
-import DetailPost from './pages/detailThread';
 import DetailImage from './pages/detailImage';
 import UserProvider from './hooks/contexts/userContexts';
 import useUserStore from './hooks/userStore';
+import { useEffect, useState } from 'react';
+import DetailThread from './pages/detailThread';
 
 export default function App() {
+  const { user, setUser, setToken } = useUserStore();
+  const [isInitialized, setIsInitialized] = useState(false);
 
- const {user} = useUserStore()
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    const savedToken = localStorage.getItem("token");
+    if (savedUser && savedToken) {
+      setUser(JSON.parse(savedUser));
+      setToken(savedToken);
+    }
+    setIsInitialized(true);
+  }, [setUser, setToken]);
+
+  if (!isInitialized) {
+    return <div>Loading...</div>;
+  }
+
+
   return (
     <>
       <UserProvider>
@@ -42,8 +59,8 @@ export default function App() {
             <Route path="/follows" element={<Follows />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/detailPost" element={<DetailPost />} />
-            <Route path="/detailImage" element={<DetailImage />} />
+            <Route path="/thread/:id" element={<DetailThread/>} />
+            <Route path="/detailImage/:id" element={<DetailImage />} />
           </Route>
         </Routes>
       </UserProvider>

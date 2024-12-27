@@ -7,27 +7,28 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ThreadsType } from "@/types/thread.types";
 import { getThreadById } from "@/features/dashboard/services/thread.services";
+import useUserStore from "@/hooks/userStore";
 
 
 export default function DetailThread (){
-
     const { id } = useParams<{ id: string }>();
     const [thread, setThread] = useState<ThreadsType | null>(null);
+    const { token } = useUserStore();
+  
     useEffect(() => {
-        if (id) {
-          fetchThreadDetail(id);
-        }
-      }, [id]);
-    
-      const fetchThreadDetail = async (threadId: string) => {
-        try {
-          const threadDetail = await getThreadById(threadId);
-          setThread(threadDetail);
-        } catch (error) {
-          console.error("Failed to fetch thread detail:", error);
-        }
-      };
-    
+      if (id && token) {
+        fetchThreadDetail(id);
+      }
+    }, [id, token]);
+  
+    const fetchThreadDetail = async (threadId: string) => {
+      try {
+        const threadDetail = await getThreadById(threadId, token || "");
+        setThread(threadDetail);
+      } catch (error) {
+        console.error("Failed to fetch thread detail:", error);
+      }
+    };
     return(
         <>
          {thread && (

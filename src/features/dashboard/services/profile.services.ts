@@ -2,7 +2,26 @@ import {Follower, Following } from "@/types/profile.types";
 import { apiURL } from "@/utils/baseurl";
 import axios from "axios";
 
-
+export const updateProfile = async (token: string, data: { username: string; email: string; bio: string }) => {
+  try {
+    const res = await axios.put(
+      `${apiURL}api/profile`,
+      { ...data },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Something went wrong");
+    }
+    throw new Error("Unexpected error occurred");
+  }
+};
 
 export const getAllThreadsByUser = async (token: string) => {
   try {

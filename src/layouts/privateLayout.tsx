@@ -1,8 +1,8 @@
 import { Outlet} from "react-router-dom"
 import { Box, HStack, VStack } from "@chakra-ui/react";
 import SideBar from "@/components/sideBar";
-import ProfileMini from "@/components/profileMini";
 import Suggest from "@/components/suggest";
+import ProfileUser from "@/components/profileUser";
 
 export default function PrivateLayout(){
 
@@ -28,7 +28,7 @@ export default function PrivateLayout(){
                 <Box flex="3" height="100vh" p="4" borderLeftWidth="1px" borderColor="#3F3F3F" position="sticky"
                 top="0">
                 <VStack  align="stretch">
-                <ProfileMini />
+                <ProfileUser />
                 <Suggest />
                 {/* <DescDev /> */}
                 </VStack>

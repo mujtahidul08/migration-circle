@@ -4,13 +4,14 @@ import { BiImageAdd } from "react-icons/bi";
 
 export default function postThread(){
     return(
-        <form>
+        <form  >
             <HStack gap="2" padding="3" display="flex" align="center" borderBottomWidth="1px" borderColor="#3F3F3F" >
                 <Image  src="https://bit.ly/naruto-sage" boxSize="40px" borderRadius="full" fit="cover"/>
                 <Input
                     padding="1"
                     placeholder="What is happening?!"
-                    color="white" />
+                    color="white"
+                    />
 
                 <BiImageAdd style={{ color: "#005E0E", fontSize: "35px" }} />
                 <Button

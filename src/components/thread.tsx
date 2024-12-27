@@ -69,12 +69,11 @@ export default function Thread() {
               </HStack>
               <Link href="/DetailPost">
                 <VStack>
-                  <Link href="/replies/:id">
+                  <Link href={`/thread/${thread.id}`}>
                     <Text
                       fontWeight="350"
                       style={{ fontSize: "13px", textAlign: "justify" }}
                       color="white"
-                      onClick={() => navigate(`/replies/${thread.id}`)}
                     >
                       {thread.content}
                     </Text>
