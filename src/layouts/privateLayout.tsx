@@ -3,11 +3,13 @@ import { Box, HStack, VStack } from "@chakra-ui/react";
 import SideBar from "@/components/sideBar";
 import Suggest from "@/components/suggest";
 import ProfileUser from "@/components/profileUser";
+import { SuggestedUserProvider } from "@/hooks/contexts/suggestedUserContext";
 
 export default function PrivateLayout(){
 
     
     return(
+        <SuggestedUserProvider>
         <div>
             <HStack gap="0" m="0" p="0" w="full" h="full">
                 {/* Sidebar */}
@@ -35,5 +37,6 @@ export default function PrivateLayout(){
                 </Box>
             </HStack>
         </div>
+        </SuggestedUserProvider>
     )
 }

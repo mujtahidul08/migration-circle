@@ -117,7 +117,9 @@ export default function DialogThread() {
           </DialogBody>
           <DialogFooter>
             <HStack>
+              <Input type='file'>
               <BiImageAdd style={{ color: '#005E0E', fontSize: '35px' }} />
+              </Input>
               <Button
                 fontSize="13px"
                 padding="-3"

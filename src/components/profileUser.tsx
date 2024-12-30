@@ -35,7 +35,7 @@ export default function ProfileUser() {
         <Stack gap="0">
           <Text fontWeight="medium" textStyle="sm" color="white">
             {user?.username}
-          </Text>
+          </Text>      
           <Text color="#909090" textStyle="xs">
             {user?.email}
           </Text>

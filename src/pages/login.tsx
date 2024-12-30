@@ -32,7 +32,6 @@ export default function Login() {
         .then((res) => {
           console.log(res);
           if (res.token) {
-            // Tampilkan SweetAlert untuk login sukses
             Swal.fire({
               title: 'Login Successful!',
               text: 'Welcome back to Circle!',

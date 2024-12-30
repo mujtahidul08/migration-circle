@@ -32,10 +32,10 @@ export const createThread = async (content: string, token: string, file: File | 
       // Kirim gambar ke Cloudinary
       const cloudinaryData = new FormData();
       cloudinaryData.append('file', file);
-      cloudinaryData.append('upload_preset', 'your_upload_preset'); // Sesuaikan dengan upload preset yang Anda buat di Cloudinary
+      cloudinaryData.append('upload_preset', 'circle-app-upload-preset'); // Sesuaikan dengan upload preset yang Anda buat di Cloudinary
 
       // Upload file ke Cloudinary
-      const cloudinaryResponse = await axios.post('https://api.cloudinary.com/v1_1/your_cloud_name/image/upload', cloudinaryData);
+      const cloudinaryResponse = await axios.post('https://api.cloudinary.com/v1_1/circle-app/image/upload', cloudinaryData);
       
       // Dapatkan URL file dari Cloudinary
       const imageUrl = cloudinaryResponse.data.secure_url; // URL gambar yang di-upload
