@@ -8,4 +8,5 @@ userRoute.get("/", getAllUsers)
 userRoute.put("/:id", updateUser)
 userRoute.delete("/:id", deleteUser)
 
+
 export default userRoute

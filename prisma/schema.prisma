@@ -18,6 +18,7 @@ model Profile {
   bio         String 
   phoneNumber String? 
   avatarImage String? 
+  backgroundImage String?
   user        User    @relation(fields: [userId], references: [id])
   userId      Int     @unique 
 }
