@@ -67,7 +67,6 @@ export default function Thread() {
                   • {new Date(thread.createdAt).toLocaleDateString()}
                 </Text>
               </HStack>
-              <Link href="/DetailPost">
                 <VStack>
                   <Link href={`/thread/${thread.id}`}>
                     <Text
@@ -88,7 +87,6 @@ export default function Thread() {
                     </Link>
                   )}
                 </VStack>
-              </Link>
               <HStack gap="7" display="flex" alignItems="center">
                 <HStack
                   display="flex"

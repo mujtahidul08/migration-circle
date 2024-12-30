@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { ThreadsType } from "@/types/thread.types";
 import { getThreadById } from "@/features/dashboard/services/thread.services";
 import useUserStore from "@/hooks/userStore";
+import DialogCreateReply from "@/components/dialogCreateReply";
 
 
 export default function DetailThread (){
@@ -61,17 +62,17 @@ export default function DetailThread (){
                             ) : (  
                             <FaRegHeart style={{ color: "white", fontSize: "17px" }} />  
                             )}
-                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}>{thread.likes.length} Likes</Text>  
+ 
                     </HStack>  
                     <HStack display="flex" alignItems="center">  
                         <BiCommentDetail style={{ color: "white", fontSize: "17px" }} />  
-                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}>{thread.replies.length} Comments</Text>  
+                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}> Comments</Text>  
                     </HStack>
                 </HStack> 
             </VStack>
         </Box>   
         )}
-
+        <DialogCreateReply/>
         <Replies threadId={id!} />
         </>
     )

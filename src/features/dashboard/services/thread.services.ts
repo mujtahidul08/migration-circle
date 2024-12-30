@@ -29,12 +29,10 @@ export const createThread = async (content: string, token: string, file: File | 
 
     // Jika ada file (gambar atau video), kirim ke Cloudinary terlebih dahulu
     if (file) {
-      // Kirim gambar ke Cloudinary
       const cloudinaryData = new FormData();
       cloudinaryData.append('file', file);
       cloudinaryData.append('upload_preset', 'circle-app-upload-preset'); // Sesuaikan dengan upload preset yang Anda buat di Cloudinary
 
-      // Upload file ke Cloudinary
       const cloudinaryResponse = await axios.post('https://api.cloudinary.com/v1_1/circle-app/image/upload', cloudinaryData);
       
       // Dapatkan URL file dari Cloudinary
@@ -92,7 +90,7 @@ export const createThread = async (content: string, token: string, file: File | 
 
 export async function getThreadById(threadId: string, token: string) { 
   console.log(`Fetching thread details from: ${apiURL}/api/thread/${threadId}`);
-  const response = await fetch(apiURL + `/api/thread/${threadId}`, {
+  const response = await fetch(apiURL + `api/thread/${threadId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

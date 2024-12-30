@@ -22,7 +22,7 @@ export default function Suggest() {
             />
             <Stack spaceY="-1.5">
               <Text fontWeight="medium" textStyle="sm" color="white">
-                {account.fullname}
+                {account.username}
               </Text>
               <Text color="#909090" textStyle="xs">{account.username}</Text>
             </Stack>
