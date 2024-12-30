@@ -1,5 +1,5 @@
 import Post from "@/components/thread";
-import ProfileMini from "@/components/profileMini";
+import ProfileUser from "@/components/profileUser";
 import { UserContext } from '@/hooks/contexts/userContexts';
 import { useContext } from 'react';
 
@@ -8,7 +8,7 @@ export default function Profile(){
     return(
         <>
             <h3 className="text-3xl text-white p-3 font-medium">{user.name}</h3>
-            <ProfileMini/>
+            <ProfileUser/>
             <Post/>
         </>
     )
