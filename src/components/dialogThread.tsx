@@ -1,4 +1,4 @@
-import { Button, HStack, Image, Input } from '@chakra-ui/react';
+import { Button, HStack, Image, Input, Box } from '@chakra-ui/react';
 import { BiImageAdd } from 'react-icons/bi';
 import {
   DialogBody,
@@ -10,29 +10,34 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { createThread } from '@/features/dashboard/services/thread.services';
 import Swal from 'sweetalert2';
+import useUserStore from '@/hooks/userStore';
 
 export default function DialogThread() {
   const [content, setContent] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  const {user,token } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!content) {
+    if (!content || !token) {
       Swal.fire({
         icon: "warning",
         title: "Oops...",
-        text: "Content cannot be empty!",
+        text: "Content and authentication are required!",
       });
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      await createThread(content, token || "");
+      await createThread(content, token, selectedFile);
 
       Swal.fire({
         icon: "success",
@@ -42,8 +47,10 @@ export default function DialogThread() {
         showConfirmButton: false,
       });
 
-      setContent(""); 
-      navigate("/"); 
+      setContent("");
+      setSelectedFile(null);
+      setPreviewImage(null);
+      navigate("/");
     } catch (error: any) {
       console.error("Error creating thread:", error.message);
 
@@ -54,50 +61,63 @@ export default function DialogThread() {
       });
     }
   };
-  return (
-    <>
-    
-      <DialogRoot>
-        <DialogTrigger asChild>
-          <HStack
-            gap="2"
-            padding="3"
-            display="flex"
-            align="center"
-            borderBottomWidth="1px"
-            borderColor="#3F3F3F"
-          >
-            <Image
-              src="https://bit.ly/naruto-sage"
-              boxSize="40px"
-              borderRadius="full"
-              fit="cover"
-            />
-            <Input
-              padding="1"
-              placeholder="What is happening?!"
-              color="white"
-             
-            />
 
-            <BiImageAdd style={{ color: '#005E0E', fontSize: '35px' }} />
-            <Button
-              fontSize="13px"
-              padding="-3"
-              type="submit"
-              height="35px"
-              width="13%"
-              rounded="20px"
-              bgColor="#005E0E"
-              color="white"
-            >
-              Post
-            </Button>
-          </HStack>
-        </DialogTrigger>
-        <DialogContent bgColor="#1D1D1D">
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+
+      // Preview gambar
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+  return (
+    <DialogRoot>
+      <DialogTrigger asChild>
+        <HStack
+          gap="2"
+          padding="3"
+          display="flex"
+          align="center"
+          borderBottomWidth="1px"
+          borderColor="#3F3F3F"
+        >
+          <Image
+            src="https://bit.ly/naruto-sage"
+            boxSize="40px"
+            borderRadius="full"
+            fit="cover"
+          />
+          <Input
+            padding="1"
+            placeholder="What is happening?!"
+            color="white"
+          />
+          <BiImageAdd
+            style={{ color: '#005E0E', fontSize: '35px', cursor: 'pointer' }}
+            onClick={() => fileInputRef.current?.click()}
+          />
+          <Button
+            fontSize="13px"
+            padding="-3"
+            type="submit"
+            height="35px"
+            width="13%"
+            rounded="20px"
+            bgColor="#005E0E"
+            color="white"
+          >
+            Post
+          </Button>
+        </HStack>
+      </DialogTrigger>
+      <DialogContent bgColor="#1D1D1D">
         <form onSubmit={handleSubmit}>
-          <DialogHeader color="white"></DialogHeader>
+          <DialogHeader color="white" />
           <DialogBody>
             <HStack>
               <Image
@@ -110,16 +130,35 @@ export default function DialogThread() {
                 padding="1"
                 placeholder="What is happening?!"
                 color="white"
-                value={content} 
+                value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
             </HStack>
+            {previewImage && (
+              <Box mt="3" display="flex" justifyContent="center">
+                <Image
+                  src={previewImage}
+                  alt="Preview"
+                  boxSize="100px"
+                  objectFit="cover"
+                  borderRadius="md"
+                />
+              </Box>
+            )}
           </DialogBody>
           <DialogFooter>
             <HStack>
-              <Input type='file'>
-              <BiImageAdd style={{ color: '#005E0E', fontSize: '35px' }} />
-              </Input>
+              <BiImageAdd
+                style={{ color: '#005E0E', fontSize: '35px', cursor: 'pointer' }}
+                onClick={() => fileInputRef.current?.click()}
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                accept="image/*"
+                onChange={handleFileChange}
+              />
               <Button
                 fontSize="13px"
                 padding="-3"
@@ -134,11 +173,9 @@ export default function DialogThread() {
               </Button>
             </HStack>
           </DialogFooter>
-          </form>
-          <DialogCloseTrigger />
-        </DialogContent>
-      </DialogRoot>
-      
-    </>
+        </form>
+        <DialogCloseTrigger />
+      </DialogContent>
+    </DialogRoot>
   );
 }
