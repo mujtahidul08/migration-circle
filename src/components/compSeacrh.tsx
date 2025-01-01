@@ -1,5 +1,4 @@
-import { Box, Input, Spinner, VStack, Text } from "@chakra-ui/react";
-import { BsPersonAdd } from "react-icons/bs";
+import { Box, Input, Spinner, VStack, Text, HStack, Image, Stack, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
 
@@ -51,7 +50,7 @@ export default function CompSeacrh() {
       />
       {/* Ikon */}
       <Box position="absolute" top="50%" left="20px" transform="translateY(-50%)">
-        <BsPersonAdd style={{ color: "gray", fontSize: "20px" }} />
+       
       </Box>
 
       {/* Loading Indicator */}
@@ -61,24 +60,54 @@ export default function CompSeacrh() {
       {searchResults.length > 0 && (
         <VStack mt="4" align="stretch" spaceX="3">
           {searchResults.map((user) => (
-            <Box
-              key={user.id}
-              p="3"
-              borderRadius="md"
-              bgColor="#2d2d2d"
-              borderWidth="1px"
-              borderColor="#04A51E"
-            >
-              <Text color="white" fontWeight="bold">
-                {user.username}
-              </Text>
-              <Text color="#909090">{user.email}</Text>
-            </Box>
+            <HStack align="center" justifyContent="space-between" width="100%" mb="10px" key={user.id}>
+                <HStack spaceX="2" align="center">
+                  <Image
+                    src={user.avatarImage || "https://bit.ly/naruto-sage"}
+                    boxSize="40px"
+                    borderRadius="full"
+                    fit="cover"
+                  />
+                  <Stack spaceY="-1.5">
+                    <Text fontWeight="medium" textStyle="sm" color="white">
+                      {user.username}
+                    </Text>
+                    <Text color="#909090" textStyle="xs">{user.email}</Text>
+                  </Stack>
+                </HStack>
+                {user.isFollow ? (
+                  <Button
+                    borderRadius="30px"
+                    padding="8px"
+                    borderWidth="1px"
+                    height="30px"
+                    color="#909090"
+                    textStyle="xs"
+                    
+                  >
+                    Following
+                  </Button>
+                ) : (
+                  <Button
+                    borderRadius="30px"
+                    padding="8px"
+                    borderWidth="1px"
+                    height="30px"
+                    color="white"
+                    textStyle="xs"
+                   
+                  >
+                    Follow
+                  </Button>
+                )}
+              </HStack>
+
+
           ))}
         </VStack>
       )}
       {query.trim() !== "" && searchResults.length === 0 && !isLoading && (
-        <Text color="white" mt="4">
+        <Text color="white" mt="4" w="full" h="full" display="flex" justifyContent="center" alignItems="center">
           No results found.
         </Text>
       )}

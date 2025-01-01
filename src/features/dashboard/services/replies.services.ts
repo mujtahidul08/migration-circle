@@ -1,4 +1,6 @@
-import axios from "axios";
+import { apiURL } from "@/utils/baseurl";
+
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 export const createReply = async (
   content: string,
@@ -12,11 +14,14 @@ export const createReply = async (
     formData.append("threadId", threadId);
 
     if (file) {
-      formData.append("image", file);
-    }
+        
+        console.log('File selected:', file); // Untuk memeriksa file yang dipilih
+  
+        formData.append("image", file); // Menambahkan file gambar yang dipilih
+      }
 
     const res = await axios.post(
-      `api/reply/${threadId}`,
+      apiURL + `api/thread/replies/${threadId}`,
       formData,
       {
         headers: {
@@ -25,7 +30,7 @@ export const createReply = async (
         },
       }
     );
-
+    console.log("Response:", res.data);
     return res.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -37,3 +42,46 @@ export const createReply = async (
     }
   }
 };
+
+export const getAllReplies = async (token: string, threadId: string) => {
+    try {
+      const res: AxiosResponse = await axios.get(
+        `${apiURL}api/thread/replies/${threadId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data; // Mengembalikan replies
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+  
+      // Verifikasi tipe error
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message || "Error fetching replies");
+      } else {
+        throw new Error("An unexpected error occurred");
+      }
+    }
+  };
+// export const getAllReplies = async (token: string, threadId: string) => {
+//     try {
+//       const res: AxiosResponse = await axios.get(apiURL + 'api/thread/replies/${threadId}', {
+//         method: 'GET',
+//         headers: {
+//           'Authorization': `Bearer ${token}`,
+//         }
+//       });
+//       console.log('result', res);
+//       return res.data.threads;  
+//     } catch (error) {
+//       if (axios.isAxiosError(error)) {
+//         console.error('axios error', error.response?.data || error.message);
+//         throw new Error(error.response?.data?.message || 'something went wrong');
+//       } else {
+//         console.error('unexpected error:', error);
+//         throw error;
+//       }
+//     }
+//   };

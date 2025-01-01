@@ -9,6 +9,7 @@ import { ThreadsType } from "@/types/thread.types";
 import { getThreadById } from "@/features/dashboard/services/thread.services";
 import useUserStore from "@/hooks/userStore";
 import DialogCreateReply from "@/components/dialogCreateReply";
+import { getTime } from "@/utils/getTime";
 
 
 export default function DetailThread (){
@@ -52,7 +53,7 @@ export default function DetailThread (){
                     <Image src={thread.image} borderRadius="10px" w="full" />  
                 )}  
                 <HStack>  
-                    <Text color="#909090" textStyle="xs"> {new Date(thread.updatedAt).toLocaleDateString()}</Text>  
+                    <Text color="#909090" textStyle="xs"> {getTime(thread.createdAt)} •</Text>  
                     <Text color="#909090" textStyle="xs"> {new Date(thread.createdAt).toLocaleDateString()}</Text>  
                 </HStack>
                 <HStack gap="7" display="flex" alignItems="center">
@@ -62,17 +63,27 @@ export default function DetailThread (){
                             ) : (  
                             <FaRegHeart style={{ color: "white", fontSize: "17px" }} />  
                             )}
- 
+                        <Text
+                            fontWeight="medium"
+                            color="#909090"
+                            style={{ fontSize: "11px" }}
+                            >
+                            {thread._count?.like || 0}
+                        </Text>
                     </HStack>  
                     <HStack display="flex" alignItems="center">  
                         <BiCommentDetail style={{ color: "white", fontSize: "17px" }} />  
-                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}> Comments</Text>  
+                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}>{thread._count?.replies || 0}  Comments</Text>  
                     </HStack>
+                    <HStack display="flex" alignItems="center">  
+                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}> Edit</Text>
+                        <Text fontWeight="medium" color="#909090" style={{fontSize:"11px"}}> Delete</Text>  
+                     </HStack>
                 </HStack> 
             </VStack>
         </Box>   
         )}
-        <DialogCreateReply/>
+        <DialogCreateReply threadId={id!}/>
         <Replies threadId={id!} />
         </>
     )

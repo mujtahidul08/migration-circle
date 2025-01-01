@@ -54,18 +54,33 @@ export const createThread = async (content: string, token: string, file: File | 
   }
 };
 
-
 export async function getThreadById(threadId: string, token: string) { 
-  console.log(`Fetching thread details from: ${apiURL}/api/thread/${threadId}`);
-  const response = await fetch(apiURL + `api/thread/${threadId}`, {
+  const response = await fetch(`${apiURL}api/thread/${threadId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
+
   if (!response.ok) {
     throw new Error("Failed to fetch thread data");
   }
+
   return response.json();
 }
+
+// export async function getThreadById(threadId: string, token: string) { 
+//   console.log(`Fetching thread details from: ${apiURL}api/thread/${threadId}`);
+//   const response = await fetch(apiURL + `api/thread/${threadId}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//       "Authorization": `Bearer ${token}`,
+//     },
+//   });
+//   if (!response.ok) {
+//     throw new Error("Failed to fetch thread data");
+//   }
+//   return response.json();
+// }

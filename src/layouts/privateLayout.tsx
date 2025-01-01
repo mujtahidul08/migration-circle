@@ -5,7 +5,11 @@ import Suggest from "@/components/suggest";
 import ProfileUser from "@/components/profileUser";
 import { SuggestedUserProvider } from "@/hooks/contexts/suggestedUserContext";
 
-export default function PrivateLayout(){
+interface PrivateLayoutProps {
+    user: any; // Sesuaikan tipe jika ada interface khusus untuk user
+  }
+
+export default function PrivateLayout({ user }: PrivateLayoutProps){
 
     
     return(
@@ -30,7 +34,7 @@ export default function PrivateLayout(){
                 <Box flex="3" height="100vh" p="4" borderLeftWidth="1px" borderColor="#3F3F3F" position="sticky"
                 top="0">
                 <VStack  align="stretch">
-                <ProfileUser />
+                <ProfileUser user={user} />
                 <Suggest />
                 {/* <DescDev /> */}
                 </VStack>

@@ -39,7 +39,7 @@ export default function Home() {
         scrollBehavior="smooth"
       >
         <h3 className="text-3xl text-white p-3 font-medium">
-          Home, {user?.username}
+          Home
         </h3>
         <DialogThread />
         <Thread />

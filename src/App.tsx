@@ -15,13 +15,14 @@ import Forgot from './pages/forgot';
 // import Post from './components/post'
 import PrivateRoute from './routes/privateRoute';
 import Follows from './pages/follows';
-import Profile from './pages/profile';
 import Search from './pages/search';
 import DetailImage from './pages/detailImage';
 import UserProvider from './hooks/contexts/userContexts';
 import useUserStore from './hooks/userStore';
 import { useEffect, useState } from 'react';
 import DetailThread from './pages/detailThread';
+import PageProfileUser from './pages/pageProfileUser';
+import PageProfileAccount from './pages/pageProfileAccount';
 
 export default function App() {
   const { user, setUser, setToken } = useUserStore();
@@ -41,7 +42,6 @@ export default function App() {
     return <div>Loading...</div>;
   }
 
-
   return (
     <>
       <UserProvider>
@@ -57,7 +57,8 @@ export default function App() {
           >
             <Route path="/" element={<Home />} />
             <Route path="/follows" element={<Follows />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<PageProfileUser/>} />
+            <Route path="/profile/:username" element={<PageProfileAccount/>} />
             <Route path="/search" element={<Search />} />
             <Route path="/thread/:id" element={<DetailThread/>} />
             <Route path="/detailImage/:id" element={<DetailImage />} />
