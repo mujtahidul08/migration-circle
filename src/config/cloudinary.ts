@@ -4,11 +4,15 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Nama cloud Anda
-  api_key: process.env.CLOUDINARY_API_KEY,       // API Key Anda
-  api_secret: process.env.CLOUDINARY_API_SECRET, // API Secret Anda
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+  api_key: process.env.CLOUDINARY_API_KEY,       
+  api_secret: process.env.CLOUDINARY_API_SECRET, 
 });
-
+console.log('Cloudinary Config:', {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 export default cloudinary;
 
 

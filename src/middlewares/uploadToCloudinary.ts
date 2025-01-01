@@ -10,15 +10,14 @@ const storage: StorageEngine = new CloudinaryStorage({
     
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif'], 
     transformation: [{ width: 500, height: 500, crop: 'limit' }], 
+    upload_preset: 'circle-app-upload-preset',
   } as any,
 });
 
-
-
 const upload = multer({ storage });
 export const uploadMultiple = upload.fields([
-  { name: 'avatar', maxCount: 1 },  
-  { name: 'coverPic', maxCount: 1 },  
+  { name: 'avatarImage', maxCount: 1 },  
+  { name: 'backgroundImage', maxCount: 1 },  
 ]);
 export default upload;
 

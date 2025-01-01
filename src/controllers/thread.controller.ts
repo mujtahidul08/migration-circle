@@ -5,173 +5,241 @@ import cloudinary from '../config/cloudinary';
 const prisma = new PrismaClient();
 
 export async function createThread(req: Request, res: Response) {
-  const { content } = req.body;
+  const { content, image } = req.body;
   const authorId = (req as any).user.id;
+  console.log('Image URL from req.body:', image);  // Debugging untuk image yang diterima dari body
+
+  if (image) {
+    console.log('Received image from body:', image);
+  } else {
+    console.log('No image received from body');
+  }
+
+  // Memeriksa apakah file diterima dengan benar
+  if (req.file) {
+    console.log('Received image file:', req.file);  // Debugging untuk file yang diterima
+  } else {
+    console.log('No image file received');
+  }
+
   if (!content || !authorId) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   let imagePath: string | null = null;
 
+  // Jika file diterima, upload ke Cloudinary
   if (req.file) {
     try {
-      // Upload to Cloudinary
+      // Upload file ke Cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'circle-app', // Cloudinary folder for organization
+        folder: 'circle-app', // Folder di Cloudinary
       });
 
-      // Get the URL of the uploaded image from Cloudinary
-      imagePath = result.secure_url; // Store the URL in your database
-      console.log('Uploaded file details:', req.file);
+      // Dapatkan URL gambar dari Cloudinary
+      imagePath = result.secure_url;
+      console.log('Uploaded image URL:', imagePath);  // URL gambar yang di-upload ke Cloudinary
     } catch (error) {
       console.error('Error uploading image to Cloudinary:', error);
       return res.status(500).json({ message: "Error uploading image", error });
     }
   }
 
-  let data = {
+  const data = {
     content,
     authorId: parseInt(authorId),
-    image: imagePath,
+    image: imagePath || image, // Menyimpan URL gambar dari Cloudinary atau URL yang dikirim
   };
-  console.log(data);
+
+  console.log('Thread data to create:', data);  // Data yang akan disimpan ke database
+
   try {
     const newThread = await prisma.thread.create({
       data,
     });
 
-    res
-      .status(201)
-      .json({ message: "Thread created successfully", thread: newThread });
+    res.status(201).json({ message: "Thread created successfully", thread: newThread });
   } catch (error) {
+    console.error('Error creating thread:', error);
     res.status(500).json({ message: "Error creating thread", error });
   }
 }
 
-
-// export async function createThread(req: Request, res: Response) {
-//   const { content, fileUrl } = req.body;
-//   const userId = (req as any).user?.id;
-
-//   if (!content || !userId) {
-//     return res.status(400).json({ message: 'All fields are required' });
-//   }
-
-//   let data = {
-//     content,
-//     authorId: parseInt(userId),
-//     image: fileUrl || null, // Simpan URL file yang diunggah
-//   };
-
-//   try {
-//     const newThread = await prisma.thread.create({
-//       data,
-//     });
-
-//     res
-//       .status(201)
-//       .json({ message: 'Thread created successfully', thread: newThread });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error creating thread', error });
-//   }
-// }
-// export async function createThread(req: Request, res: Response) {
-//   const { content } = req.body;
-//   const userId = (req as any).user?.id; 
-
-//   if (!content || !userId) {
-//     return res.status(400).json({ message: 'All fields are required' });
-//   }
-
-//   let imagePath: string | null = null;
-//   const file = req.file;
-//   if (req.file) {
-//     console.log(req.file);
-//     imagePath = req.file.filename;
-//   }
-
-//   let data = {
-//     content,
-//     authorId: parseInt(userId),
-//     image: imagePath,
-//   };
-
-//   console.log('data :', data);
-
-//   try {
-//     const newThread = await prisma.thread.create({
-//       data,
-//     });
-
-//     res
-//       .status(201)
-//       .json({ message: 'Thread created successfully', thread: newThread });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error creating thread', error });
-//   }
-// }
-
 export async function getAllThreads(req: Request, res: Response) {
-  try {    
-    const allThreads = await prisma.thread.findMany({
-      where: {
-        isDeleted: 0,
-      },
-      orderBy: {
-        createdAt: 'desc', // Urutkan berdasarkan createdAt descending
-      },
-      select: {
-        id: true,
-        authorId: true,
-        createdAt: true,
-        updatedAt: true,
-        content: true,
-        image: true,
-        like: true,
-        replies: true,
-        author: {
-          select: {
-            username: true,
-            email: true,
-            profile: true
-          },
-        },
-      },
-    });
-
-    res
-      .status(200)
-      .json({ message: 'Get all threads successful', threads: allThreads });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching all threads', error });
-  }
-}
-
-export async function getThreadById(req: Request, res: Response) {
-  const threadId = parseInt(req.params.id);
-  console.log(`Fetching thread with ID: ${threadId}`);
+  const { userId } = req.body; // Pastikan `userId` dari pengguna yang login dikirim dari frontend
   try {
-    const thread = await prisma.thread.findUnique({
-      where: { id: threadId },
-      include: {
-        author: true,
-        replies: {
-          include: {
-            like: true,
+      const threads = await prisma.thread.findMany({
+          where: { isDeleted: 0 },
+          orderBy: { createdAt: 'desc' },
+          select: {
+              id: true,
+              authorId: true,
+              createdAt: true,
+              updatedAt: true,
+              content: true,
+              image: true,
+              author: {
+                  select: {
+                      username: true,
+                      email: true,
+                      profile: { select: { avatarImage: true } },
+                  },
+              },
+              _count: {
+                  select: { like: true, replies: true },
+              },
+              like: {
+                  select: { userId: true },
+              },
           },
-        },
-      },
-    });
+      });
 
-    if (!thread) {
-      return res.status(404).json({ message: "Thread not found" });
-    }
+      // Tambahkan properti `isLike` berdasarkan data likes
+      const threadsWithIsLike = threads.map((thread) => ({
+          ...thread,
+          isLike: thread.like.some((like) => like.userId === userId),
+      }));
 
-    res.status(200).json(thread);
+      res.status(200).json({
+          message: 'Get all threads successful',
+          threads: threadsWithIsLike,
+      });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching thread detail", error });
+      console.error('Error in getAllThreads:', error);
+      res.status(500).json({ message: 'Error fetching threads', error });
   }
 }
+
+// export async function getAllThreads(req: Request, res: Response) {
+//   try {    
+//     const allThreads = await prisma.thread.findMany({
+//       where: {
+//         isDeleted: 0,
+//       },
+//       orderBy: {
+//         createdAt: 'desc',
+//       },
+//       select: {
+//         id: true,
+//         authorId: true,
+//         createdAt: true,
+//         updatedAt: true,
+//         content: true,
+//         image: true,
+//         _count: {
+//           select: {
+//             replies: true, // Menghitung jumlah replies
+//             like: true,    // Menghitung jumlah likes
+//           },
+//         },
+//         author: {
+//           select: {
+//             username: true,
+//             email: true,
+//             profile: true,
+//           },
+//         },
+//       },
+//     });
+
+//     res.status(200).json({
+//       message: 'Get all threads successful',
+//       threads: allThreads,
+//     });
+//   } catch (error) {
+//     console.error('Error in getAllThreads:', error);
+//     res.status(500).json({ message: 'Error fetching all threads', error });
+//   }
+// }
+
+// export async function getAllThreads(req: Request, res: Response) {
+//   try {    
+//     const allThreads = await prisma.thread.findMany({
+//       where: {
+//         isDeleted: 0,
+//       },
+//       orderBy: {
+//         createdAt: 'desc', // Urutkan berdasarkan createdAt descending
+//       },
+//       select: {
+//         id: true,
+//         authorId: true,
+//         createdAt: true,
+//         updatedAt: true,
+//         content: true,
+//         image: true,
+//         like: true,
+//         replies: true,
+//         author: {
+//           select: {
+//             username: true,
+//             email: true,
+//             profile: true
+//           },
+//         },
+//       },
+//     });
+
+//     res
+//       .status(200)
+//       .json({ message: 'Get all threads successful', threads: allThreads });
+//   } catch (error) {
+//     console.error('Error in getAllThreads:', error);
+//     res.status(500).json({ message: 'Error fetching all threads', error });
+//   }
+// }
+// export async function getThreadsByUser(req: Request, res: Response) {
+//   const userId = req.user?.id; // Asumsi Anda sudah mengautentikasi user dan menyimpan `user.id` dalam `req.user`
+//   try {
+//     const threads = await prisma.thread.findMany({
+//       where: {
+//         authorId: userId, // Filter hanya thread milik user yang sedang login
+//       },
+//       include: {
+//         author: true,
+//         replies: {
+//           include: {
+//             like: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (threads.length === 0) {
+//       return res.status(404).json({ message: "Nothing Thread" });
+//     }
+
+//     res.status(200).json(threads);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching threads by user", error });
+//   }
+// }
+
+// export async function getThreadById(req: Request, res: Response) {
+//   const threadId = parseInt(req.params.id);
+//   console.log(`Fetching thread with ID: ${threadId}`);
+//   try {
+//     const thread = await prisma.thread.findUnique({
+//       where: { id: threadId },
+//       include: {
+//         author: true,
+//         replies: {
+//           include: {
+//             like: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!thread) {
+//       return res.status(404).json({ message: "Thread not found" });
+//     }
+
+//     res.status(200).json(thread);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching thread detail", error });
+//   }
+// }
 
 export async function updateThread(req: Request, res: Response) {
   const { content, fileUrl } = req.body;
@@ -322,3 +390,68 @@ export async function likeThread(req: Request, res: Response) {
     res.status(500).json({ message: 'Error liking thread', error });
   }
 }
+
+export async function getThreadById(req: Request, res: Response) {
+  const threadId = parseInt(req.params.id);
+  console.log(`Fetching thread with ID: ${threadId}`);
+  try {
+    const thread = await prisma.thread.findUnique({
+      where: { id: threadId },
+      include: {
+        author: {
+          select: {
+            username: true,
+            email: true,
+            profile: {
+              select: {
+                avatarImage: true,
+              },
+            },
+          },
+        },
+        replies: true,
+        _count: {
+          select: {
+            like: true,
+            replies: true,
+          },
+        },
+      },
+    });
+
+    if (!thread) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+
+    res.status(200).json(thread);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching thread detail", error });
+  }
+}
+
+// export async function getThreadById(req: Request, res: Response) {
+//   const threadId = parseInt(req.params.id);
+//   console.log(`Fetching thread with ID: ${threadId}`);
+//   try {
+//     const thread = await prisma.thread.findUnique({
+//       where: { id: threadId },
+//       include: {
+//         author: true,
+//         replies: {
+//           include: {
+//             like: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!thread) {
+//       return res.status(404).json({ message: "Thread not found" });
+//     }
+
+//     res.status(200).json(thread);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching thread detail", error });
+//   }
+// }
