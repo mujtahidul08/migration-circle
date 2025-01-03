@@ -310,40 +310,72 @@ export async function updateThread(req: Request, res: Response) {
 
 export async function deleteThread(req: Request, res: Response) {
   const threadId = parseInt(req.params.id);
+  const userId = (req as any).user?.id; // Pastikan Anda sudah mengonfirmasi user login
 
   try {
-    const threadExist = await prisma.thread.findUnique({
+    // Cek apakah thread yang diminta milik user yang sedang login
+    const thread = await prisma.thread.findUnique({
       where: { id: threadId },
     });
 
-    if (!threadExist) {
-      return res.status(404).json({ message: 'Thread not found' });
+    if (!thread) {
+      return res.status(404).json({ message: "Thread not found" });
     }
 
-    if (threadExist.authorId !== (req as any).user.id) {
-      return res
-        .status(401)
-        .json({ message: 'User not granted to delete this thread' });
+    if (thread.authorId !== userId) {
+      return res.status(403).json({ message: "You are not authorized to delete this thread" });
     }
 
-    if (threadExist.isDeleted === 1) {
-      return res.status(400).json({ message: 'Thread is already deleted' });
-    }
-
-    await prisma.thread.update({
-      where: {
-        id: threadId,
-      },
-      data: {
-        isDeleted: 1,
-      },
+    // Hapus thread
+    await prisma.thread.delete({
+      where: { id: threadId },
     });
 
-    res.status(200).json({ message: 'thread deleted' });
+    res.status(200).json({ message: "Thread deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting thread', error });
+    console.error("Error deleting thread", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 }
+
+
+// export async function deleteThread(req: Request, res: Response) {
+//   const threadId = parseInt(req.params.id);
+
+//   try {
+//     const threadExist = await prisma.thread.findUnique({
+//       where: { id: threadId },
+//     });
+
+//     if (!threadExist) {
+//       return res.status(404).json({ message: 'Thread not found' });
+//     }
+
+//     if (threadExist.authorId !== (req as any).user.id) {
+//       return res
+//         .status(401)
+//         .json({ message: 'User not granted to delete this thread' });
+//     }
+
+//     if (threadExist.isDeleted === 1) {
+//       return res.status(400).json({ message: 'Thread is already deleted' });
+//     }
+
+//     await prisma.thread.update({
+//       where: {
+//         id: threadId,
+//       },
+//       data: {
+//         isDeleted: 1,
+//       },
+//     });
+
+//     res.status(200).json({ message: 'thread deleted' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error deleting thread', error });
+//   }
+// }
+
 
 export async function likeThread(req: Request, res: Response) {  
   const userId = (req as any).user.id; 
@@ -362,17 +394,14 @@ export async function likeThread(req: Request, res: Response) {
     });
 
     if (existingLike) {
+      // Remove like
       await prisma.like.delete({
         where: {
           id: existingLike.id,
         },
       });
-      return res.status(200).json({
-        message: 'Like removed from thread',
-        threadId: threadId,
-        liked: false,
-      });
     } else {
+      // Add like
       await prisma.like.create({
         data: {
           userId: userId,
@@ -380,16 +409,71 @@ export async function likeThread(req: Request, res: Response) {
           isLike: 1, 
         },
       });
-      return res.status(201).json({
-        message: 'Thread liked successfully',
-        threadId: threadId,
-        liked: true,
-      });
     }
+
+    // Recalculate the like count
+    const updatedLikeCount = await prisma.like.count({
+      where: { threadId: threadId },
+    });
+
+    return res.status(200).json({
+      message: existingLike ? 'Like removed from thread' : 'Thread liked successfully',
+      threadId: threadId,
+      liked: !existingLike,
+      likeCount: updatedLikeCount,
+    });
+    
   } catch (error) {
+    console.error('Error liking thread:', error);
     res.status(500).json({ message: 'Error liking thread', error });
   }
 }
+
+// export async function likeThread(req: Request, res: Response) {  
+//   const userId = (req as any).user.id; 
+//   const threadId = parseInt(req.params.id);
+
+//   try {
+//     if (!userId || !threadId) {
+//       return res.status(400).json({ message: 'User ID and Thread ID are required' });
+//     }
+
+//     const existingLike = await prisma.like.findFirst({
+//       where: {
+//         userId: userId,
+//         threadId: threadId,
+//       },
+//     });
+
+//     if (existingLike) {
+//       await prisma.like.delete({
+//         where: {
+//           id: existingLike.id,
+//         },
+//       });
+//       return res.status(200).json({
+//         message: 'Like removed from thread',
+//         threadId: threadId,
+//         liked: false,
+//       });
+//     } else {
+//       await prisma.like.create({
+//         data: {
+//           userId: userId,
+//           threadId: threadId,
+//           isLike: 1, 
+//         },
+//       });
+//       return res.status(201).json({
+//         message: 'Thread liked successfully',
+//         threadId: threadId,
+//         liked: true,
+//       });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error liking thread', error });
+//   }
+// }
 
 export async function getThreadById(req: Request, res: Response) {
   const threadId = parseInt(req.params.id);
@@ -455,3 +539,4 @@ export async function getThreadById(req: Request, res: Response) {
 //     res.status(500).json({ message: "Error fetching thread detail", error });
 //   }
 // }
+
