@@ -1,21 +1,15 @@
-import { Box, Input, Spinner, VStack, Text, HStack, Image, Stack, Button } from "@chakra-ui/react";
+import { Box, Input, Spinner, VStack, Text, HStack, Image, Stack, Button, Link } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
+import { useSuggestedUsers } from "@/hooks/contexts/suggestedUserContext";
 
 export default function CompSeacrh() {
   const [query, setQuery] = useState<string>(""); 
   const [searchResults, setSearchResults] = useState<any[]>([]); 
   const [isLoading, setIsLoading] = useState<boolean>(false); 
 
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
-
-    if (value.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-
+  // Fetch search results
+  const fetchSearchResults = async (searchQuery: string) => {
     setIsLoading(true);
 
     try {
@@ -23,7 +17,7 @@ export default function CompSeacrh() {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`, 
         },
-        params: { q: value }, // Kirim query parameter
+        params: { q: searchQuery }, 
       });
 
       setSearchResults(response.data.results);
@@ -33,6 +27,81 @@ export default function CompSeacrh() {
       setIsLoading(false);
     }
   };
+
+  // Handle input change
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (value.trim() === "") {
+      setSearchResults([]);
+    } else {
+      fetchSearchResults(value);
+    }
+  };
+
+  // Toggle Follow/Following
+  const handleFollowToggle = async (userId: number) => {
+    try {
+      await axios.post(
+        `http://localhost:3000/api/profile/follow/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Update local state
+      setSearchResults((prevResults) =>
+        prevResults.map((user) =>
+          user.id === userId ? { ...user, isFollow: !user.isFollow } : user
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  };
+  // const [query, setQuery] = useState<string>(""); 
+  // const [searchResults, setSearchResults] = useState<any[]>([]); 
+  // const [isLoading, setIsLoading] = useState<boolean>(false); 
+  // const { handleFollowToggle } = useSuggestedUsers();
+
+  // const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setQuery(value);
+
+  //   if (value.trim() === "") {
+  //     setSearchResults([]);
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+
+  //   try {
+  //     const response = await axios.get("http://localhost:3000/api/search", {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`, 
+  //       },
+  //       params: { q: value }, // Kirim query parameter
+  //     });
+
+  //     setSearchResults(response.data.results);
+  //   } catch (error) {
+  //     console.error("Error fetching search results:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  // const handleFollowClick = async (userId: number) => {
+  //   await handleFollowToggle(userId); // Call toggle function from context
+  //   setSearchResults((prevResults) =>
+  //     prevResults.map((user) =>
+  //       user.id === userId ? { ...user, isFollow: !user.isFollow } : user
+  //     )
+  //   ); // Update local searchResults state
+  // };
 
   return (
     <Box position="relative" width="100%" p="3">
@@ -61,6 +130,7 @@ export default function CompSeacrh() {
         <VStack mt="4" align="stretch" spaceX="3">
           {searchResults.map((user) => (
             <HStack align="center" justifyContent="space-between" width="100%" mb="10px" key={user.id}>
+                <Link href={`/profile/${user.id}`}>
                 <HStack spaceX="2" align="center">
                   <Image
                     src={user.avatarImage || "https://bit.ly/naruto-sage"}
@@ -75,34 +145,46 @@ export default function CompSeacrh() {
                     <Text color="#909090" textStyle="xs">{user.email}</Text>
                   </Stack>
                 </HStack>
-                {user.isFollow ? (
-                  <Button
-                    borderRadius="30px"
-                    padding="8px"
-                    borderWidth="1px"
-                    height="30px"
-                    color="#909090"
-                    textStyle="xs"
-                    
-                  >
-                    Following
-                  </Button>
-                ) : (
-                  <Button
-                    borderRadius="30px"
-                    padding="8px"
-                    borderWidth="1px"
-                    height="30px"
-                    color="white"
-                    textStyle="xs"
-                   
-                  >
-                    Follow
-                  </Button>
-                )}
+                </Link>
+
+                {/* {user.isFollow ? (
+                <Button
+                  borderRadius="30px"
+                  padding="8px"
+                  borderWidth="1px"
+                  height="30px"
+                  color="#909090"
+                  textStyle="xs"
+                  onClick={() => handleFollowToggle(user.id)}
+                >
+                  Following
+                </Button>
+              ) : (
+                <Button
+                  borderRadius="30px"
+                  padding="8px"
+                  borderWidth="1px"
+                  height="30px"
+                  color="white"
+                  textStyle="xs"
+                  onClick={() => handleFollowToggle(user.id)}
+                >
+                  Follow
+                </Button>
+              )} */}
+                <Button
+                borderRadius="30px"
+                padding="8px"
+                borderWidth="1px"
+                height="30px"
+                color={user.isFollow ? "#909090" : "white"}
+                textStyle="xs"
+                onClick={() => handleFollowToggle(user.id)} // Use handleFollowClick
+              >
+                {user.isFollow ? "Following" : "Follow"}
+              </Button>
+
               </HStack>
-
-
           ))}
         </VStack>
       )}

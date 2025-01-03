@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Box, Tabs, Text } from "@chakra-ui/react";
 import ThreadByUser from "@/components/threadByUser";
-import useUserStore from "@/hooks/userStore";
+import useUserStore from "@/hooks/store/userStore";
 import { apiURL } from "@/utils/baseurl";
 import axios from "axios";
 import ProfileUser from "@/components/profileUser";
 import { userType } from "@/types/user.types";
+import ImageByUser from "@/components/imageByUser";
 
 export default function PageProfileUser() {
   const { token } = useUserStore(); // Ambil token dari global state
@@ -25,6 +26,7 @@ export default function PageProfileUser() {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Profile data:", response.data);
       setProfileData(response.data); // Simpan data user ke state
     } catch (error) {
       console.error("Failed to fetch profile data", error);
@@ -81,11 +83,11 @@ export default function PageProfileUser() {
                 Image
               </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value="followers" mt="4">
+            <Tabs.Content value="post" mt="0">
               {token ? <ThreadByUser token={token} />:<p className="text-white">Token not found</p>}
             </Tabs.Content>
-            <Tabs.Content value="following" mt="4">
-
+            <Tabs.Content value="image" mt="0">
+            {token ? <ImageByUser token={token} />:<p className="text-white">Token not found</p>}
             </Tabs.Content>
           </Tabs.Root>
         </>

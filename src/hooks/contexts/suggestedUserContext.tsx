@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import useUserStore from "@/hooks/userStore";
+import useUserStore from "@/hooks/store/userStore";
+import { apiURL } from "@/utils/baseurl";
 
 type SuggestedUser = {
   id: number;
@@ -34,7 +35,7 @@ export const SuggestedUserProvider: React.FC<{ children: React.ReactNode }> = ({
           Authorization: `Bearer ${token}`,
         },
       });
-      setSuggestedUsers(response.data.users.slice(0, 5)); // Batasi 5 user
+      setSuggestedUsers(response.data.users.slice(0, 5));
     } catch (error) {
       console.error("Failed to fetch suggested users", error);
     }
@@ -48,7 +49,7 @@ export const SuggestedUserProvider: React.FC<{ children: React.ReactNode }> = ({
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/profile/follow/${userId}`,
+        apiURL+`api/profile/follow/${userId}`,
         {},
         {
           headers: {

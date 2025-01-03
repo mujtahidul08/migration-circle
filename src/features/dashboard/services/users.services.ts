@@ -1,6 +1,6 @@
 
 import { apiURL } from "@/utils/baseurl"
-
+import axios from "axios";
 export const getAllUser = (token:string) => {
     fetch(apiURL + 'users',{
         method:'GET',
@@ -23,3 +23,15 @@ export const getAllUser = (token:string) => {
         console.error(err)
       })
     }
+
+export async function forgotPassword(email: string) {
+  const response = await axios.post('http://localhost:3000/api/users/forgot', { email });
+  return response.data;
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  const response = await axios.put(`http://localhost:3000/api/users/reset?token=${token}`, {
+    newPassword,
+  });
+  return response.data;
+}

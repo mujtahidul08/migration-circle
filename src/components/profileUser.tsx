@@ -1,10 +1,11 @@
-import { Box, HStack, Image, Stack, Text } from '@chakra-ui/react';
+import { Box, HStack, Image, Link, Stack, Text } from '@chakra-ui/react';
 import DialogEditProfile from './dialogEditProfile';
 
 export default function ProfileUser({ user }: { user: any }) {
   return (
     <>
       <Box padding="10px" bgColor="#262626" borderRadius="10px" mb="5px">
+      
         <h3 className="text-lg text-white mb-2">My Profile</h3>
         <div className="mb-7" style={{ position: "relative", width: "100%" }}>
           <Image
@@ -28,7 +29,7 @@ export default function ProfileUser({ user }: { user: any }) {
           />
           <DialogEditProfile user={user} />
         </div>
-
+        <Link href='/profile'>
         <Stack gap="0">
           <Text fontWeight="medium" textStyle="sm" color="white">
             {user?.username}
@@ -37,6 +38,7 @@ export default function ProfileUser({ user }: { user: any }) {
             {user?.email}
           </Text>
         </Stack>
+        </Link>
 
         <Text textStyle="sm" color="white" truncate>
           {user?.profile?.bio || "No bio available"}
@@ -45,7 +47,7 @@ export default function ProfileUser({ user }: { user: any }) {
         <HStack>
           <HStack>
             <Text fontWeight="medium" textStyle="xs" color="white">
-              {user?.following?.length || 0}
+            {user?.follower?.length || 0}
             </Text>
             <Text color="#909090" textStyle="xs">
               Following
@@ -53,13 +55,14 @@ export default function ProfileUser({ user }: { user: any }) {
           </HStack>
           <HStack>
             <Text fontWeight="medium" textStyle="xs" color="white">
-              {user?.follower?.length || 0}
+            {user?.following?.length || 0}
             </Text>
             <Text color="#909090" textStyle="xs">
               Followers
             </Text>
           </HStack>
         </HStack>
+        
       </Box>
     </>
   );

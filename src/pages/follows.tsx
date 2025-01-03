@@ -1,11 +1,10 @@
 import Followers from "@/components/Followers";
 import Following from "@/components/Following";
-import SuggestAccount from "@/components/suggestAccount";
+import useUserStore from "@/hooks/store/userStore";
 import { Box, Tabs, Text } from "@chakra-ui/react";
 
 export default function Follows() {
-  // Ambil token dari localStorage (atau sumber penyimpanan lain)
-  const token = localStorage.getItem("token");
+  const { token } = useUserStore(); 
 
   return (
     <Box w="full" h="full" p="4">

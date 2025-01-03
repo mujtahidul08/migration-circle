@@ -1,5 +1,5 @@
 import { getAllReplies } from "@/features/dashboard/services/replies.services";
-import useUserStore from "@/hooks/userStore";
+import useUserStore from "@/hooks/store/userStore";
 import { RepliesType } from "@/types/reply.types";
 import { getRelativeTime } from "@/utils/getRelativeTimes";
 import { Box, HStack, Image, Text, VStack } from "@chakra-ui/react";

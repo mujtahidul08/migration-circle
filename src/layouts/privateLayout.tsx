@@ -6,7 +6,7 @@ import ProfileUser from "@/components/profileUser";
 import { SuggestedUserProvider } from "@/hooks/contexts/suggestedUserContext";
 
 interface PrivateLayoutProps {
-    user: any; // Sesuaikan tipe jika ada interface khusus untuk user
+    user: any; 
   }
 
 export default function PrivateLayout({ user }: PrivateLayoutProps){

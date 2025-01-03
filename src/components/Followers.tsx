@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, HStack, Image, Stack, Text } from "@chakra-ui/react";
+import { Button, HStack, Image, Stack, Text,Link } from "@chakra-ui/react";
 import { Follower } from "@/types/profile.types";
 import { fetchFollowers } from "@/features/dashboard/services/profile.services";
 
@@ -10,17 +10,17 @@ interface FollowersProps {
 export default function Followers({ token }: FollowersProps) {
   const [followers, setFollowers] = useState<Follower[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const getFollowers = async () => {
       if (!token) {
         console.error("No token found, user is not authenticated");
         return;
       }
-
+  
       try {
         setLoading(true);
-        const fetchedFollowers = await fetchFollowers(token); // Kirimkan token sebagai parameter
+        const fetchedFollowers = await fetchFollowers(token);
+        console.log("Fetched Followers:", fetchedFollowers);
         setFollowers(fetchedFollowers);
       } catch (error) {
         console.error("Error fetching followers:", error);
@@ -28,7 +28,7 @@ export default function Followers({ token }: FollowersProps) {
         setLoading(false);
       }
     };
-
+  
     getFollowers();
   }, [token]);
 
@@ -45,6 +45,7 @@ export default function Followers({ token }: FollowersProps) {
     <>
       {followers.map((account, index) => (
         <HStack align="center" justifyContent="space-between" width="100%" mb="10px" key={index}>
+          <Link href={`/profile/$${account.id}`}>
           <HStack spaceX="2" align="center">
             <Image
               src={account.image}
@@ -61,6 +62,7 @@ export default function Followers({ token }: FollowersProps) {
               </Text>
             </Stack>
           </HStack>
+          </Link>
           {account.isFollow ? (
             <Button
               onClick={() => toggleFollow(account.id)}

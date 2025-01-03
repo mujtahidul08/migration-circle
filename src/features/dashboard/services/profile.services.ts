@@ -145,7 +145,7 @@ export const updateProfile = async (
 
 export const getAllThreadsByUser = async (token: string) => {
   try {
-    const response = await axios.get(`${apiURL}api/profile/threads`, {
+    const response = await axios.get(`${apiURL}api/profile/user`, {
       headers: {
         Authorization: `Bearer ${token}`, // Kirim token sebagai Bearer Authorization
       },
@@ -159,26 +159,44 @@ export const getAllThreadsByUser = async (token: string) => {
 
 export const fetchFollowers = async (token: string): Promise<Follower[]> => {
   try {
-    const response = await axios.get(`${apiURL}api/profile/followers`, {
-      headers: {
-        Authorization: `Bearer ${token}`,  // Mengirimkan token di header
-      },
-    });
+    const response = await axios.get<{ followers: Follower[] }>(
+      "http://localhost:3000/api/profile/followers",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Kirim token dalam header
+        },
+      }
+    );
 
-    const followers = response.data.followers.map((follower: any) => ({
-      id: follower.id,
-      fullname: follower.fullname,
-      username: `@${follower.username}`,
-      image: follower.avatarImage || "https://bit.ly/naruto-sage",  // Menambahkan fallback image
-      email: follower.email,  // Menambahkan email dari response
-      isFollow: true,
-    }));
-    return followers;
+    return response.data.followers;
   } catch (error) {
     console.error("Error fetching followers:", error);
-    throw error;
+    throw new Error("Failed to fetch followers");
   }
 };
+
+// export const fetchFollowers = async (token: string): Promise<Follower[]> => {
+//   try {
+//     const response = await axios.get(`${apiURL}api/profile/followers`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`, 
+//       },
+//     });
+    
+//     const followers = response.data.followers.map((follower: any) => ({
+//       id: follower.id,
+//       fullname: follower.fullname,
+//       username: `${follower.username}`,
+//       image: follower.avatarImage || "https://bit.ly/naruto-sage",  
+//       email: follower.email,  
+//       isFollow: true,
+//     }));
+//     return followers;
+//   } catch (error) {
+//     console.error("Error fetching followers:", error);
+//     throw error;
+//   }
+// };
 
 // export const fetchFollowers = async (): Promise<Follower[]> => {
 //   try {
@@ -208,7 +226,7 @@ export const fetchFollowing = async (token: string): Promise<Follower[]> => {
     const following = response.data.following.map((user: any) => ({
       id: user.id,
       fullname: user.fullname,
-      username: `@${user.username}`,
+      username: `${user.username}`,
       image: user.avatarImage || "https://bit.ly/naruto-sage", // Fallback image
       email: user.email,
       isFollow: true,
@@ -236,3 +254,17 @@ export const fetchFollowing = async (token: string): Promise<Follower[]> => {
 //     throw error;
 //   }
 // };
+
+export const getAllByAccount = async (authorId: string, token: string) => {
+  try {
+    const response = await axios.get(`${apiURL}api/profile/account/${authorId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Kirim token sebagai Bearer Authorization
+      },
+    });
+    return response.data.threads; // Mengembalikan data threads
+  } catch (error) {
+    console.error("Error fetching threads:", error);
+    throw error;
+  }
+};

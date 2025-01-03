@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 import { createThread } from '@/features/dashboard/services/thread.services';
 import Swal from 'sweetalert2';
-import useUserStore from '@/hooks/userStore';
+import useUserStore from '@/hooks/store/userStore';
 
 export default function DialogThread() {
   const [content, setContent] = useState("");

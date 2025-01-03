@@ -4,8 +4,6 @@ export type RepliesType = {
   image?: string;
   createdAt: Date;
   updatedAt: Date;
-
-  
   likes: Array<string>;
   replies: Array<string>;
   isLike: boolean;

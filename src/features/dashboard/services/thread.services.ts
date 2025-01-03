@@ -84,3 +84,15 @@ export async function getThreadById(threadId: string, token: string) {
 //   }
 //   return response.json();
 // }
+
+export const likeThread = async (threadId: number, token: string) => {
+  return axios.post(
+    apiURL+`api/threads/like/${threadId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

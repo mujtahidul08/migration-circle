@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { fetchLogin } from '@/features/auth/services/auth-service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import useUserStore from '@/hooks/userStore';
+import useUserStore from '@/hooks/store/userStore';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
@@ -96,7 +96,7 @@ export default function Login() {
               errors.password && (<Text color="red" fontSize="xs">{errors.password.message}</Text>)
             }
             <div className="forgot">
-              <a className="text-[#04A51E]" href="/reset">
+              <a className="text-[#04A51E]" href="/forgot">
                 Forgot Password?
               </a>
             </div>
