@@ -32,9 +32,13 @@ export async function searchUser(req: Request, res: Response) {
         username: true,
         email: true,
         fullname: true,
+        profile: {
+          select: {
+            avatarImage: true,
+          },
+        },
       },
-      // skip: (page - 1) * pageSize,
-      // take: pageSize,
+
     });
 
     res.status(200).json({

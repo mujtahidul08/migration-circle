@@ -180,14 +180,22 @@ export async function likeReply(req: Request, res: Response) {
   
     try {
       const replies = await prisma.reply.findMany({
-        where: { threadId }, // Mengambil replies berdasarkan threadId
+        where: { threadId }, 
         include: {
-          author: { select: { username: true, profile: { select: { avatarImage: true } } } },
+          author: {
+            select: {
+              email: true, 
+              username: true,
+              profile: {
+                select: { avatarImage: true },
+              },
+            },
+          },
         },
-        orderBy: { createdAt: "desc" }, // Mengurutkan replies berdasarkan waktu pembuatan
+        orderBy: { createdAt: "desc" }, 
       });
   
-      res.status(200).json(replies); // Mengirimkan data replies
+      res.status(200).json(replies); 
     } catch (error) {
       console.error("Error fetching replies:", error);
       res.status(500).json({ message: "Error fetching replies", error });

@@ -44,7 +44,7 @@ export async function getProfileUser(req: Request, res: Response) {
         },
       },
     });
-
+    
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -160,6 +160,11 @@ export async function getFollowing(req: Request, res: Response) {
             username: true,
             email: true,
             fullname: true,
+            profile: {
+              select: {
+                avatarImage: true,
+              },
+            },
           },
         },
       },
@@ -497,8 +502,6 @@ export const updateProfile = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export async function getSuggestedUsers(req: Request, res: Response) {
   const userId = (req as any).user?.id;
   if (!userId) {
@@ -524,6 +527,7 @@ export async function getSuggestedUsers(req: Request, res: Response) {
       id: user.id,
       username: user.username,
       fullname: user.fullname || '',
+      email: user.email,
       avatar: user.profile?.avatarImage || '',
       isFollow: user.following?.some((f) => f.followingId === userId) || false, 
       followerCount: user.follower?.length || 0, 
