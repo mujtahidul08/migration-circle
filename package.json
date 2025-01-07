@@ -9,12 +9,12 @@
     "preview": "vite preview",
     "lint": "eslint --fix .",
     "format": "prettier --write .",
-    "prepare": "husky",
+    "prepare": "husky install",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-     "postinstall": "husky install || echo 'Skipping husky installation on Vercel'",
-     "start": "nodemon app/server.js"
+    "start": "nodemon app/server.js",
+    "postinstall": "is-ci || husky install"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.2.5",
