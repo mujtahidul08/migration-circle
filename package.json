@@ -13,8 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "start": "nodemon app/server.js",
-    "postinstall": "is-ci || husky install"
+    "start": "nodemon app/server.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.2.5",
