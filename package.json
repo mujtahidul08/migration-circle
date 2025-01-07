@@ -9,7 +9,6 @@
     "preview": "vite preview",
     "lint": "eslint --fix .",
     "format": "prettier --write .",
-    "prepare": "chmod +x ./node_modules/husky/lib/bin.js && husky install",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
