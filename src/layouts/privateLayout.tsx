@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import useUserStore from "@/hooks/store/userStore";
 import useFollowStore from "@/hooks/store/followStore";
 import { fetchFollowers, fetchFollowing } from "@/features/dashboard/services/profile.services";
-import { ChakraProvider } from '@chakra-ui/react';
 
 
 export default function PrivateLayout() {
