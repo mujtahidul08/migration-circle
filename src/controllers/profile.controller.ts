@@ -226,110 +226,7 @@ export const getFollowers = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
-// export async function getFollowers(req: Request, res: Response) {
-//   const userId = (req as any).user?.id;
 
-//   if (!userId || typeof userId !== "number") {
-//     return res.status(400).json({ message: "Invalid user ID format." });
-//   }
-
-//   try {
-//     const followers = await prisma.follow.findMany({
-//       where: {
-//         followingId: userId,
-//       },
-//       include: {
-//         follower: {
-//           select: {
-//             id: true,
-//             username: true,
-//             email: true,
-//             fullname: true,
-//           },
-//         },
-//       },
-//     });
-
-//     const result = followers.map((f) => f.follower);
-
-//     res.status(200).json({ followers: result });
-//   } catch (error) {
-//     console.error("Error fetching followers:", error);
-//     res.status(500).json({ message: "Failed to fetch followers", error });
-//   }
-// }
-
-// export async function getFollowers(req: Request, res: Response) {
-//   // Ambil userId dari req.user yang didapatkan dari middleware authentication
-//   const userId = (req as any).user?.id;
-
-//   console.log("Authenticated User ID (Followers):", userId);
-
-//   // Validasi userId untuk memastikan format yang benar
-//   if (!userId || typeof userId !== 'number') {
-//     return res.status(400).json({ message: 'Invalid Author ID format.' });
-//   }
-
-//   try {
-//     // Mengambil followers berdasarkan followingId
-//     const followers = await prisma.follow.findMany({
-//       where: {
-//         followingId: userId,
-//       },
-//       include: {
-//         follower: {
-//           select: {
-//             id: true,
-//             username: true,
-//             email: true,
-//             fullname: true,
-//           },
-//         },
-//       },
-//     });
-
-//     // Ambil hanya data follower dari response
-//     const result = followers.map((f) => f.follower);
-
-//     res.status(200).json({ message: 'Followers list fetched successfully', followers: result });
-//   } catch (error) {
-//     console.error('Error fetching followers:', error);
-//     res.status(500).json({ message: 'Error fetching followers', error });
-//   }
-// }
-
-// export async function getFollowers(req: Request, res: Response) {
-//   const userId = (req as any).user?.id;
-
-//   if (!userId) {
-//     return res.status(401).json({ message: 'Unauthorized' });
-//   }
-
-// try {
-//   const followers = await prisma.follow.findMany({
-//     where: {
-//       followingId: userId,
-//     },
-//     include: {
-//       follower: {
-//         select: {
-//           id: true,
-//           username: true,
-//           email: true,
-//           fullname: true,
-//         },
-//       },
-//     },
-//   });
-
-//   const result = followers.map((f) => f.follower);
-
-//   res.status(200).json({ message: 'Followers list fetched successfully', followers: result });
-// } catch (error) {
-//   console.error('Error fetching followers:', error);
-//   res.status(500).json({ message: 'Error fetching followers', error });
-// }
-// }
 
 
 export async function suggestAccount(req: Request, res: Response) {
@@ -509,49 +406,39 @@ export async function getSuggestedUsers(req: Request, res: Response) {
   }
 
   try {
-    // Ambil semua user kecuali yang sedang login
-    const allUsers = await prisma.user.findMany({
+    const suggestedUsers = await prisma.user.findMany({
       where: {
-        id: { not: userId }, // Kecualikan diri sendiri
+        id: { not: userId }, // Kecualikan pengguna yang sedang login
         isDeleted: 0,
+        follower: {
+          none: { followerId: userId }, // Hanya pengguna yang belum diikuti
+        },
       },
       include: {
-        follower: true,
-        following: true,
         profile: true,
+        follower: true, // Tambahkan ini untuk menyertakan data follower
       },
     });
 
-    // Hitung jumlah follower dan tandai apakah user ini follow kita
-    const suggestedUsers = allUsers.map((user) => ({
+    const formattedUsers = suggestedUsers.map((user) => ({
       id: user.id,
       username: user.username,
       fullname: user.fullname || '',
       email: user.email,
       avatar: user.profile?.avatarImage || '',
-      isFollow: user.following?.some((f) => f.followingId === userId) || false, 
-      followerCount: user.follower?.length || 0, 
+      followerCount: user.follower?.length || 0,
     }));
 
-    // Urutan berdasarkan: 1. `isFollow` descending, 2. `followerCount` descending
-    suggestedUsers.sort((a, b) => {
-      if (a.isFollow !== b.isFollow) return b.isFollow ? 1 : -1;
-      return b.followerCount - a.followerCount;
-    });
-
-    res.status(200).json({ message: 'Suggested users retrieved', users: suggestedUsers });
+    res.status(200).json({ message: 'Suggested users retrieved', users: formattedUsers });
   } catch (error) {
     console.error('Error fetching suggested users:', error);
-
-    // Casting error ke tipe Error
     const err = error as Error;
     res.status(500).json({ message: 'Failed to fetch suggested users', error: err.message });
   }
 }
 
-
 // export async function getSuggestedUsers(req: Request, res: Response) {
-//   const userId = (req as any).user?.id; 
+//   const userId = (req as any).user?.id;
 //   if (!userId) {
 //     return res.status(401).json({ message: 'Unauthorized' });
 //   }
@@ -575,22 +462,30 @@ export async function getSuggestedUsers(req: Request, res: Response) {
 //       id: user.id,
 //       username: user.username,
 //       fullname: user.fullname || '',
+//       email: user.email,
 //       avatar: user.profile?.avatarImage || '',
-//       isFollow: user.follower.some((f) => f.followerId === userId),
-//       followerCount: user.follower.length,
+//       isFollow: user.following?.some((f) => f.followingId === userId) || false, 
+//       followerCount: user.follower?.length || 0, 
 //     }));
 
-//     // Urutkan berdasarkan: 1. `isFollow` descending, 2. `followerCount` descending
+//     // Urutan berdasarkan: 1. `isFollow` descending, 2. `followerCount` descending
 //     suggestedUsers.sort((a, b) => {
 //       if (a.isFollow !== b.isFollow) return b.isFollow ? 1 : -1;
 //       return b.followerCount - a.followerCount;
 //     });
 
 //     res.status(200).json({ message: 'Suggested users retrieved', users: suggestedUsers });
-//   } catch (error) {        
-//     res.status(500).json({ message: 'Failed to fetch suggested users', error });
+//   } catch (error) {
+//     console.error('Error fetching suggested users:', error);
+
+//     // Casting error ke tipe Error
+//     const err = error as Error;
+//     res.status(500).json({ message: 'Failed to fetch suggested users', error: err.message });
 //   }
 // }
+
+
+
 
 export async function FollowUser(req: Request, res: Response) {
   const followerId = parseInt((req as any).user.id); // User yang mengikuti
@@ -772,111 +667,3 @@ export async function getAllByAccount(req: Request, res: Response) {
   }
 }
 
-
-// export async function getFollowers(req: Request, res: Response) {
-//   const userId = parseInt((req as any).user?.id, 10);
-//   console.log("Authenticated User ID:", userId);
-
-//   if (isNaN(userId)) {
-//     return res.status(400).json({ message: 'Invalid Author ID format.' });
-//   }
-//   try {
-//     const followers = await prisma.follow.findMany({
-//       where: {
-//         followingId: userId, 
-//       },
-//       include: {
-//         follower: { 
-//           select: {
-//             id: true,
-//             username: true,
-//             email: true,
-//             fullname: true,
-//           },
-//         },
-//       },
-//     });
-
-//     const result = followers.map((f) => f.follower); 
-
-//     res.status(200).json({ message: 'Followers list fetched successfully', followers: result });
-//   } catch (error) {
-//     console.error('Error fetching followers:', error);
-//     res.status(500).json({ message: 'Error fetching followers', error });
-//   }
-// }
-// export const updateProfile = async (req: Request, res: Response) => {
-//   try {
-//     console.log("Starting updateProfile...");
-
-//     // Cast untuk mendapatkan userId
-//     const userId = (req as any).user?.id; // Casting lokal
-//     console.log("User ID:", userId);
-
-//     const { username, email, bio } = req.body;
-//     console.log("Request Body:", { username, email, bio });
-
-//     let avatarUrl = undefined;
-//     let coverPicUrl = undefined;
-
-//     // Validasi format input
-//     const hasWhitespace = /\s/;
-//     if (username && hasWhitespace.test(username)) {
-//       console.warn("Username contains spaces:", username);
-//       return res.status(400).json({ message: "Username cannot contain spaces" });
-//     }
-//     if (email && hasWhitespace.test(email)) {
-//       console.warn("Email contains spaces:", email);
-//       return res.status(400).json({ message: "Email cannot contain spaces" });
-//     }
-
-//     // Cek keunikan username dan email
-//     if (username) {
-//       console.log("Checking username availability...");
-//       const existingUsername = await prisma.user.findUnique({ where: { username } });
-//       console.log("Existing Username:", existingUsername);
-//       if (existingUsername && existingUsername.id !== userId) {
-//         return res.status(400).json({ message: "Username is already taken" });
-//       }
-//     }
-
-//     if (email) {
-//       console.log("Checking email availability...");
-//       const existingEmail = await prisma.user.findUnique({ where: { email } });
-//       console.log("Existing Email:", existingEmail);
-//       if (existingEmail && existingEmail.id !== userId) {
-//         return res.status(400).json({ message: "Email is already taken" });
-//       }
-//     }
-
-//     // Proses file upload
-//     console.log("Processing file uploads...");
-//     const files = (req as any).files || {}; // Casting lokal
-//     console.log("Uploaded Files:", files);
-
-//     const avatarFile = files?.avatarImage?.[0];
-//     const backgroundFile = files?.backgroundImage?.[0];
-
-//     if (avatarFile) {
-//       console.log("Uploading avatar...");
-//       try {
-//         const avatarUpload = await cloudinary.uploader.upload(avatarFile.path, { folder: "avatars" });
-//         avatarUrl = avatarUpload.secure_url;
-//         console.log("Avatar uploaded:", avatarUrl);
-//       } catch (error) {
-//         console.error("Failed to upload avatar:", error);
-//         return res.status(500).json({ message: "Failed to upload avatar" });
-//       }
-//     }
-
-//     if (backgroundFile) {
-//       console.log("Uploading background...");
-//       try {
-//         const backgroundUpload = await cloudinary.uploader.upload(backgroundFile.path, { folder: "backgrounds" });
-//         coverPicUrl = backgroundUpload.secure_url;
-//         console.log("Background uploaded:", coverPicUrl);
-//       } catch (error) {
-//         console.error("Failed to upload background:", error);
-//         return res.status(500).json({ message: "Failed to upload background" });
-//       }
-//     }

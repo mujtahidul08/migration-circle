@@ -170,37 +170,75 @@ export async function likeReply(req: Request, res: Response) {
     }
   }
 
-  
   export async function getAllReply(req: Request, res: Response) {
     const threadId = parseInt(req.params.id); // Mengambil threadId dari parameter URL
-    
+  
     if (isNaN(threadId)) {
       return res.status(400).json({ message: "Invalid Thread ID" });
     }
   
     try {
       const replies = await prisma.reply.findMany({
-        where: { threadId }, 
+        where: { threadId },
         include: {
           author: {
             select: {
-              email: true, 
+              email: true,
               username: true,
               profile: {
                 select: { avatarImage: true },
               },
             },
           },
+          _count: {
+            select: { like: true }, // Menghitung jumlah like
+          },
         },
-        orderBy: { createdAt: "desc" }, 
+        orderBy: { createdAt: "desc" },
       });
-  
-      res.status(200).json(replies); 
+      
+      const formattedReplies = replies.map((reply) => ({
+        ...reply,
+        likeCount: reply._count.like || 0, // Menambahkan likeCount dengan fallback ke 0
+      }));
+      
+      res.status(200).json(formattedReplies);// Mengirimkan hasil dengan likeCount
     } catch (error) {
       console.error("Error fetching replies:", error);
       res.status(500).json({ message: "Error fetching replies", error });
     }
   }
+
+  // export async function getAllReply(req: Request, res: Response) {
+  //   const threadId = parseInt(req.params.id); // Mengambil threadId dari parameter URL
+    
+  //   if (isNaN(threadId)) {
+  //     return res.status(400).json({ message: "Invalid Thread ID" });
+  //   }
+  
+  //   try {
+  //     const replies = await prisma.reply.findMany({
+  //       where: { threadId }, 
+  //       include: {
+  //         author: {
+  //           select: {
+  //             email: true, 
+  //             username: true,
+  //             profile: {
+  //               select: { avatarImage: true },
+  //             },
+  //           },
+  //         },
+  //       },
+  //       orderBy: { createdAt: "desc" }, 
+  //     });
+  
+  //     res.status(200).json(replies); 
+  //   } catch (error) {
+  //     console.error("Error fetching replies:", error);
+  //     res.status(500).json({ message: "Error fetching replies", error });
+  //   }
+  // }
   // export async function getAllReply(req: Request, res: Response) {
   //   const threadId = parseInt(req.params.id);
   

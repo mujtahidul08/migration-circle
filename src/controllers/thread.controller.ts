@@ -242,9 +242,9 @@ export async function getAllThreads(req: Request, res: Response) {
 // }
 
 export async function updateThread(req: Request, res: Response) {
-  const { content, fileUrl } = req.body;
   const threadId = parseInt(req.params.id);
-  const userId = (req as any).user?.id;
+  const { content } = req.body;
+  const fileUrl = req.file ? req.file.path : undefined;
 
   try {
     const thread = await prisma.thread.findUnique({ where: { id: threadId } });
@@ -253,8 +253,7 @@ export async function updateThread(req: Request, res: Response) {
       return res.status(404).json({ message: 'Thread not found' });
     }
 
-    const updatedData: any = {};
-    if (content) updatedData.content = content;
+    const updatedData: any = { content };
     if (fileUrl) updatedData.image = fileUrl;
 
     const updatedThread = await prisma.thread.update({
@@ -270,6 +269,35 @@ export async function updateThread(req: Request, res: Response) {
     res.status(500).json({ message: 'Error updating thread', error });
   }
 }
+// export async function updateThread(req: Request, res: Response) {
+//   const { content, fileUrl } = req.body;
+//   const threadId = parseInt(req.params.id);
+//   const userId = (req as any).user?.id;
+
+//   try {
+//     const thread = await prisma.thread.findUnique({ where: { id: threadId } });
+
+//     if (!thread) {
+//       return res.status(404).json({ message: 'Thread not found' });
+//     }
+
+//     const updatedData: any = {};
+//     if (content) updatedData.content = content;
+//     if (fileUrl) updatedData.image = fileUrl;
+
+//     const updatedThread = await prisma.thread.update({
+//       where: { id: threadId },
+//       data: updatedData,
+//     });
+
+//     res.status(200).json({
+//       message: 'Thread updated successfully',
+//       thread: updatedThread,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error updating thread', error });
+//   }
+// }
 
 // export async function updateThread(req: Request, res: Response) {
 //   const { content,image} = req.body;
